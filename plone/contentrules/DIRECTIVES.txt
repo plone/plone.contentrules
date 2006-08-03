@@ -1,0 +1,24 @@
+TODO: Describe directives here
+
+
+    <plone:ruleCondition 
+        name="plone.objectType"
+        title="Object type"
+        description="Object type condition"
+        for="Products.ATContentTypes.interface.IContent"
+        schema=".conditions.interfaces.IObjectType"
+        factory=".conditions.objecttype.ObjectTypeCondition"
+        />
+        
+    <plone:ruleAction
+        ...
+        />
+        
+    <utility 
+        for="Products.ATContentTypes.interface.IContent"
+        provides=".conditions.interfaces.IRuleCondition"
+        factory=".conditions.registrations.ObjectType"
+        />
+        
+    rule = getUtilitiesFor(IRuleCondition)
+    
