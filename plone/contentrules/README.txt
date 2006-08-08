@@ -32,6 +32,7 @@ rule element. This allows zope to create a form.
 Creates the actual class for holding the configuration data:
   
   >>> class MoveToFolderAction(Persistent):
+  ...     implements (IMoveToFolderAction)
   ...     targetFolder = ''
 
 In order to be able to execute the rule elements that form a rule, they must be
@@ -41,8 +42,9 @@ adaptable to IExecutable
   >>> class MoveToFolderExecutor(object):
   ...     implements(IExecutable)
   ...     adapts(IMoveToFolderAction)
-  ...     
-  ...     def execute(self):
+  ...     def __init__(self, context):
+  ...         self.context = context
+  ...     def execute(self, context, event):
   ...         print "Tried to execute MoveToFolderExecutor, but not implemented"
   ...         return True
 
@@ -187,3 +189,34 @@ needs to retrieve or modify rules for that context.
   ()
   
   >>> localRuleManager.saveRule(testRule)
+  
+Executing rules
+---------------
+
+An event can trigger rules bound to a context. The event will use an 
+IRuleExecutor to do so. 
+  
+  >>> from plone.contentrules.engine.interfaces import IRuleExecutor
+  >>> locator = ILocatable(context)
+  >>> localRuleExecutor = IRuleExecutor(locator)
+  
+The executor method will typically be passed an event, so that rules may 
+determine what triggered them. However, in this case we are triggering the rule
+manually, so no event is passed. This is legal according to the interface.
+
+  >>> localRuleExecutor.executeAll(None)
+  Tried to execute MoveToFolderExecutor, but not implemented
+  
+To do
+-----
+
+Stuff to test:
+
+- executing a rule when you have elements that return false, ie stop execution
+- multiple rule elements
+- multiple rules
+
+
+implement: 
+- filtering by event
+- storing rule element type in specificRule.elements

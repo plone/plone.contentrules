@@ -19,8 +19,11 @@ class IExecutable(interface.Interface):
     to be executed when the rule that contains it is executed.
     """
     
-    def execute():
+    def execute(context, event):
         """Execute the element.
+        
+        Context is the object the rule element is acting upon. 
+        Event is the triggering event. This could be None.
         
         If this method returns False, execution will stop. If it returns True,
         execution will continue if possible.

@@ -45,14 +45,16 @@ class IRuleExecutor(Interface):
     Typically, a content object will be adapted to this interface
     """
     
-    def execute(rule):
+    def execute(rule, event):
         """Execute a rule in the current context
         
+        Event is the triggering event. This can be None.
         """
     
-    def executeAll():
+    def executeAll(event):
         """Execute all rules applicable in the current context
         
+        Event is the triggering event. This can be None.
         """
         
 class IRuleStorage(Interface):

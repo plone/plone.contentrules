@@ -32,16 +32,16 @@ class Rule(Persistent):
 class ExecutableRule(object):
     """An adapter capable of executing a rule
     """
-
+    
     implements(IExecutable)
     adapts(IRule)
     
     def __init__(self, context):
-        self.context=context
+        self.adapted=context
     
-    def execute(self):
-        for element in self.context.elements:
+    def execute(self, context, event):
+        for element in self.adapted.elements:
             executable=IExecutable(element)
-            if not executable.execute():
+            if not executable.execute(context, event):
                 return False
         return True

@@ -4,4 +4,6 @@
     
     <adapter factory=".manager.RuleManager" />
     
+    <adapter factory=".executor.RuleExecutor" />
+    
 </configure>
