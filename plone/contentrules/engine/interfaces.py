@@ -4,7 +4,7 @@ __docformat__ = 'restructuredtext'
 
 from zope import interface, schema
 
-class ILocatable(interfaces.Interface):
+class ILocatable(interface.Interface):
     """Abstraction of an object that can have a location.
 
     """
