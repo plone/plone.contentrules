@@ -1,8 +1,6 @@
 <configure xmlns="http://namespaces.zope.org/zope">
     
-    <utility provides=".interfaces.IRuleStorage"
-             factory=".storage.RuleStorage"
-    />
+    <utility factory=".storage.RuleStorage" />
     
     <adapter factory=".manager.RuleManager" />
     

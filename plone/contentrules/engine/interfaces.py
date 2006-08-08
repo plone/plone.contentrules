@@ -2,15 +2,15 @@
 """
 __docformat__ = 'restructuredtext'
 
-from zope import interface, schema
+from zope.interface import Interface
+from zope import schema
 
-class ILocatable(interface.Interface):
+class ILocatable(Interface):
     """Abstraction of an object that can have a location.
-
     """
     
-    location = schema.TextLine(title="Location",
-                               description="The unique location of this object",
+    location = schema.TextLine(title=u"Location",
+                               description=u"The unique location of the object",
                                required=True,
                                readonly=True)
                                
@@ -18,7 +18,7 @@ class ILocatable(interface.Interface):
         """Return the actual object at this location.
         """
 
-class IRuleManager(interface.Interface):
+class IRuleManager(Interface):
     """An object that is capable of managing rules
     
     Typically, a content object will be adapted to this interface
@@ -39,7 +39,7 @@ class IRuleManager(interface.Interface):
         
         """
 
-class IRuleExecutor(interface.Interface):
+class IRuleExecutor(Interface):
     """An object that is capable of executing rules.
     
     Typically, a content object will be adapted to this interface
@@ -55,7 +55,7 @@ class IRuleExecutor(interface.Interface):
         
         """
         
-class IRuleStorage(interface.Interface):
+class IRuleStorage(Interface):
     """Storage for rules
     
     This will be looked up as a site-wide utility
@@ -66,7 +66,6 @@ class IRuleStorage(interface.Interface):
 
         """
 
-        
     def removeRule(theRule, location):
         """remove a rule from a specific location.
         

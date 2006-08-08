@@ -30,7 +30,7 @@ Create some rule elements.
 
   >>> from plone.contentrules.rule.interfaces import IRuleCondition, IRuleAction
   
-  >>> from zope.interfaces import Interface, implements
+  >>> from zope.interface import Interface, implements
   >>> from zope.component import adapts
   
 1. Make a schema for the rule condition/action (a new interface)
