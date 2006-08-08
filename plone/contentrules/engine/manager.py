@@ -1,7 +1,7 @@
 from zope.interface import implements
-from zope.component import adapts
+from zope.component import adapts, getUtility
 
-from interfaces import IRuleManager, ILocatable
+from interfaces import IRuleManager, ILocatable, IRuleStorage
 
 class RuleManager(object):
     """
@@ -15,7 +15,7 @@ class RuleManager(object):
 
     def getRules(self):
         storage = getUtility(IRuleStorage)
-        storage.rulesAtLocation(self.context.location)
+        return storage.rulesAtLocation(self.context.location)
 
     def saveRule(self, rule):
         storage = getUtility(IRuleStorage)
