@@ -13,7 +13,8 @@ class Rule(Persistent):
     
     title = u''
     description = u''
-    elements = [] 
+    event = None
+    elements = []
 
     def __init__(self, elements=None):
         """get a list of elements, test each, if they work, append?"""
@@ -40,7 +41,19 @@ class ExecutableRule(object):
         self.adapted=context
     
     def execute(self, context, event):
+        # Assert that the rule is triggered on an event it was registered for
+        import sys
+        
+        assert  type(event) == type(self.adapted.event)
+        
         for element in self.adapted.elements:
+            # Assert element is applicable to this type of event (UI should
+            # enforce this)
+            
+            sys.stderr.write("\n**** commented malformed assert or worse in "
+                             "contentrules/rule/rule.py, roundabout line 53")
+            #assert element.event is None or isinstance(event, element.event)
+
             executable=IExecutable(element)
             if not executable.execute(context, event):
                 return False

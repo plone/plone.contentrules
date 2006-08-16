@@ -24,19 +24,41 @@ class IRuleManager(Interface):
     Typically, a content object will be adapted to this interface
     """
     
-    def getRules():
-        """get a list of all the IRules
+    def getAvailableConditions(event):
+        """Get a list of all IRuleConditions applicable to the given event.
+        Also includes non-event-specific elements!
+        """
         
+    def allAvailableConditions():
+        """Return a mapping of all available IRuleConditions, with events as
+        keys. One key will be None, for the non-event-specific elements.
+        """
+        
+    def getAvailableActions(event):
+        """Get a list of all IRuleActions applicable to the given event.
+        Also includes non-event-specific elements!
+        """
+        
+    def allAvailableActions():
+        """Return a mapping of all available IRuleActions, with events as
+        keys. One key will be None, for the non-event-specific elements.
         """
     
-    def saveRule(rule):
-        """add or update a given rule
+    def getRules(event):
+        """Get a list of all the IRules in this context applicable to the
+        given event.
+        """
         
+    def listRules():
+        """Get a list of all rules in this context (for all events).
+        """
+        
+    def saveRule(rule):
+        """Add or update a given rule
         """
     
     def removeRule(rule):
-        """remove a given rule
-        
+        """Remove a given rule
         """
 
 class IRuleExecutor(Interface):
@@ -48,13 +70,13 @@ class IRuleExecutor(Interface):
     def execute(rule, event):
         """Execute a rule in the current context
         
-        Event is the triggering event. This can be None.
+        event is the triggering event.
         """
     
     def executeAll(event):
         """Execute all rules applicable in the current context
         
-        Event is the triggering event. This can be None.
+        event is the triggering event.
         """
         
 class IRuleStorage(Interface):
@@ -64,28 +86,32 @@ class IRuleStorage(Interface):
     """
     
     def saveRule(theRule, location):
-        """ Add a new IRule for the given loction
-
+        """Add a new IRule for the given loction
         """
 
     def removeRule(theRule, location):
-        """remove a rule from a specific location.
+        """Remove a rule from a specific location.
+        """
+    
+    def rulesAtLocation(location, event=None):
+        """Returns all rules at a given location
+    
+        If event is not None, only return rules registered for this event. If
+        it is passed as None, return all rules for all events at this location.
+        """
+    
+    def listRules(locations=None, events=None):
+        """Lists all rules on the storage that match the locations filter, if 
+        given 
         
+        The locations filter, if given, contains a list of locations to match to.
+        The events filter, if given, contains a list of events to match to
         """
     
-    def rulesAtLocation(location):
-        """returns all rules at a given location
-    
-        """
-    
-    def listRules(locations=None):
-        """lists all rules on the storage that match the locations filter, if given 
+    def allRules(locations=None, events=None):
+        """Return a mapping of location to a list of rules subject to the 
+        locations filter
         
         The locations filter, if given, contains a list of locations to match to
-        """
-    
-    def allRules(locations=None):
-        """Return a mapping of location to a list of rules subject to the locations filter
-        
-        The locations filter, if given, contains a list of locations to match to
+        The events filter, if given, contains a list of events to match to
         """

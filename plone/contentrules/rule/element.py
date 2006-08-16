@@ -14,6 +14,7 @@ class RuleElement(object):
     title = u''
     description = u''
     for_ = Interface
+    event = None
     schema = None
     factory = None
     

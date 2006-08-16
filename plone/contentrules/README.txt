@@ -60,6 +60,7 @@ result in an object like the one below.
   >>> newElement.title = "Move To Folder"
   >>> newElement.description = "Move an object to a folder"
   >>> newElement.for_ = Interface
+  >>> newElement.event = None
   >>> newElement.schema = IMoveToFolderAction
   >>> newElement.factory = MoveToFolderAction
   
@@ -71,6 +72,85 @@ See if it worked:
   
   >>> getUtility(IRuleAction, name="test.moveToFolder")
   <plone.contentrules.rule.element.RuleAction object at ...>
+
+
+
+
+For the second example, we will create a rule element to log caught events.
+First, let us make some sort of temporary logger:
+  
+  >>> import logging
+  >>> logger = logging.getLogger("temporary_logger")
+  >>> handler = logging.StreamHandler() #just stderr for the moment
+  >>> formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s -  %(message)s")
+  >>> handler.setFormatter(formatter)
+  >>> logger.addHandler(handler)
+
+Calling logger.warning with a string element should now generate a message in stderr, like so:
+logger.warning("A monkey sneezed in the jungle.")
+
+should yield
+2006-08-15 00:07:56,148 - temporary_logger - WARNING - A monkey sneezed in the jungle.
+
+Again, we have to define an interface for the logger action:
+
+  >>> class ILoggerAction(Interface):
+  ...     targetLogger = schema.TextLine(title=u"target logger",default=u"temporary_logger")
+  ...         # this should end up being picked from a list
+  ...     loggingLevel = schema.TextLine(title=u"logging level", default = u"warning")
+  ...         # this too
+  ...     loggerMessage = schema.TextLine(title=u"message",
+  ...                                     description=u"&e = the triggering event, &c = the context",
+  ...                                     default=u"caught &e at &c")
+  ...     # could also use logging.formatter syntax?
+
+a factory class holding configuration data:
+         
+  >>> class LoggerAction(Persistent):
+  ...     implements (ILoggerAction)
+  ...     loggingLevel = ''
+  ...     targetLogger = ''
+  ...     message = ''
+
+as well as the executor that does the actual logging, capable of being adapted
+to IExecutable:
+
+  >>> class LoggerActionExecutor(object):
+  ...     implements(IExecutable)
+  ...     adapts(ILoggerAction)
+  ...    
+  ...     def __init__(self, context):
+  ...         self.context = context
+  ...     def execute(self, context, event):
+  ...        
+  ...         logger = logging.getLogger(self.context.targetLogger)
+  ...        
+  ...         processedMessage = self.context.message.replace("&e", repr(event))
+  ...         processedMessage = processedMessage.replace("&c", repr(context)) #... I know ... 
+  ...   
+  ...         logger.warning(processedMessage) #ignores loggingLevel for the moment
+  ...         return True #logging shouldn't interrupt rule execution, for any reason
+
+  >>> provideAdapter(ILoggerAction, IExecutable, LoggerActionExecutor)
+
+
+This element will also be created using ZCML, but we will create it manually for
+now:
+
+  >>> loggerElement = RuleAction()
+  >>> loggerElement.title = "Log Event"
+  >>> loggerElement.description = "Log the caught event to a target log"
+  >>> loggerElement.for_ = Interface
+  >>> loggerElement.event = None
+  >>> loggerElement.schema = ILoggerAction
+  >>> loggerElement.factory = LoggerAction
+  >>> provideUtility(IRuleAction, loggerElement, "test.logger")
+
+See if it worked:
+  
+  >>> getUtility(IRuleAction, name="test.logger")
+  <plone.contentrules.rule.element.RuleAction object at ...>
+  
 
 Composing elements into rules
 ------------------------------
@@ -109,6 +189,7 @@ The element, once created, now needs to be saved as part of a rule.
   >>> testRule = Rule()
   >>> testRule.title = "Fairly simple test rule"
   >>> testRule.description = "only contains move to folder action"
+  >>> testRule.event = Interface
   >>> testRule.elements.append(configuredAction) # selectedAction
 
 Managing rules relative to objects
@@ -200,23 +281,32 @@ IRuleExecutor to do so.
   >>> locator = ILocatable(context)
   >>> localRuleExecutor = IRuleExecutor(locator)
   
-The executor method will typically be passed an event, so that rules may 
-determine what triggered them. However, in this case we are triggering the rule
-manually, so no event is passed. This is legal according to the interface.
+The executor method will be passed an event, so that rules may determine what 
+triggered them. Because this is a test, we registered the rule for the "event"
+described by "Interface". In fact, this would equate to a rule triggered by
+any and all events.
 
-  >>> localRuleExecutor.executeAll(None)
+  >>> localRuleExecutor.executeAll(Interface)
   Tried to execute MoveToFolderExecutor, but not implemented
-  
+
+
+
 To do
 -----
 
 Stuff to test:
 
+- asserts still not working
 - executing a rule when you have elements that return false, ie stop execution
 - multiple rule elements
 - multiple rules
+- test event filtering
 
+demonstrate:
+- logging rule registered for Interface
 
 implement: 
+
+- update implementations from engine.interfaces!
 - filtering by event
 - storing rule element type in specificRule.elements

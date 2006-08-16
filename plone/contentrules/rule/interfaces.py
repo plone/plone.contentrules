@@ -45,6 +45,10 @@ class IRule(interface.Interface):
     description = schema.Text(title = u'Description',
                               description = u'A summary of the rule',
                               required = False)
+
+    event = configuration_fields.GlobalInterface(title = u'Triggering event',
+                                                 description = u'The event that can trigger this rule',
+                                                 required = True)
     
     elements = schema.Iterable(title = u'Rule elements',
                                description = u'The elements that the rule consists of',
@@ -70,6 +74,12 @@ class IRuleElement(interface.Interface):
         description = u'The interface this component is available for',
         required = False)
     
+    event = configuration_fields.GlobalInterface(
+        title = u'Applicable event',
+        description = u'The event that can trigger this element, None meaning '
+                       'it is not event specific.',
+        required = False)
+        
     schema = configuration_fields.GlobalInterface(
         title = u'Schema',
         description = u'Schema for element configuration',
