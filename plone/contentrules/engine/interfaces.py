@@ -5,7 +5,7 @@ __docformat__ = 'restructuredtext'
 from zope.interface import Interface
 from zope import schema
 
-from zope.app.annotation.interfaces import IAttributeAnnotatable
+from zope.annotation.interfaces import IAttributeAnnotatable
 
 class IRuleContainer(IAttributeAnnotatable):
     """Marker interface for objects that can store rules.

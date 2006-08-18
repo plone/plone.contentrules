@@ -1,7 +1,7 @@
 from zope.interface import implements
 from zope.component import adapts, getAllUtilitiesRegisteredFor
 
-from zope.app.annotation.interfaces import IAnnotations
+from RuleExecutable.interfaces import IAnnotations
 
 from plone.contentrules.engine.interfaces import IRuleManager
 from plone.contentrules.engine.interfaces import IRuleContainer
