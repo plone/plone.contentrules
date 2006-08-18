@@ -1,9 +1,10 @@
 from zope.interface import implements
 from zope.component import adapts, getMultiAdapter
 
-from zope.app.annotation.interfaces import IAnnotatable
+from plone.contentrules.engine.interfaces import IRuleExecutor
+from plone.contentrules.engine.interfaces import IRuleManager
+from plone.contentrules.engine.interfaces import IRuleContainer
 
-from plone.contentrules.engine.interfaces import IRuleExecutor, IRuleManager
 from plone.contentrules.rule.interfaces import IExecutable
 
 class RuleExecutor(object):
@@ -11,7 +12,7 @@ class RuleExecutor(object):
     """
     
     implements(IRuleExecutor)
-    adapts(IAnnotatable)
+    adapts(IRuleContainer)
     
     def __init__(self, context):
         self.context = context

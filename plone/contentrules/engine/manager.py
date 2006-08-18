@@ -1,10 +1,13 @@
 from zope.interface import implements
 from zope.component import adapts, getAllUtilitiesRegisteredFor
 
-from zope.app.annotation.interfaces import IAnnotatable, IAnnotations
+from zope.app.annotation.interfaces import IAnnotations
 
 from plone.contentrules.engine.interfaces import IRuleManager
-from plone.contentrules.rule.interfaces import IRuleAction, IRuleCondition
+from plone.contentrules.engine.interfaces import IRuleContainer
+
+from plone.contentrules.rule.interfaces import IRuleCondition
+from plone.contentrules.rule.interfaces import IRuleAction
 
 KEY = 'plone.contentrules.localrules'
 
@@ -13,7 +16,7 @@ class RuleManager(object):
     """
     
     implements(IRuleManager)
-    adapts(IAnnotatable)
+    adapts(IRuleContainer)
 
     def __init__(self, context):
         self.context = context

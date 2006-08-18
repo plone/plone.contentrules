@@ -193,14 +193,14 @@ The element, once created, now needs to be saved as part of a rule.
 Managing rules relative to objects
 ----------------------------------
 
-Rules are bound to events and contexts. A context should be IAnnotatable
-so that the rule manager can reference it.
+Rules are bound to events and contexts. A context should be marked with
+IRuleContainer so that the rule manager can reference it.
 
 Create a fictional content object to use as a context.
 
-  >>> from zope.app.annotation.interfaces import IAttributeAnnotatable
+  >>> from plone.contentrules.engine.interfaces import IRuleContainer
 
-  >>> class IMyContent(IAttributeAnnotatable):
+  >>> class IMyContent(IRuleContainer):
   ...     pass
 
   >>> class MyContent(object):
