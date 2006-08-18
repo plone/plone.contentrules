@@ -40,7 +40,7 @@ adaptable to IExecutable. This should be a multi-adapter from
 (context, element, event).
 
   >>> from plone.contentrules.rule.interfaces import IExecutable
-  >>> from zope.app.event.interfaces import IObjectEvent
+  >>> from zope.component.interfaces import IObjectEvent
   
   >>> class MoveToFolderExecutor(object):
   ...     implements(IExecutable)
@@ -247,7 +247,7 @@ described by "Interface". In fact, this would equate to a rule triggered by
 any and all events.
 
 
-  >>> from zope.app.event.objectevent import ObjectEvent
+  >>> from zope.component.interfaces import ObjectEvent
   >>> someEvent = ObjectEvent(context)
 
   >>> localRuleExecutor.executeAll(someEvent)

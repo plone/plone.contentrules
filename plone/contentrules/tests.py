@@ -2,7 +2,7 @@ import unittest
 
 import zope.app
 import zope.app.component
-import RuleExecutable
+import zope.annotation
 import plone.contentrules
 
 from zope.testing import doctest
@@ -14,7 +14,7 @@ optionflags = doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS
 def configurationSetUp(test):
     setUp()
     XMLConfig('meta.zcml', zope.app.component)()
-    XMLConfig('configure.zcml', RuleExecutable)()
+    XMLConfig('configure.zcml', zope.annotation)()
     XMLConfig('configure.zcml', plone.contentrules)()
     # XMLConfig('meta.zcml', plone.contentrules)()
 
