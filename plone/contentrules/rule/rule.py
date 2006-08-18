@@ -3,7 +3,17 @@ from persistent import Persistent
 from zope.interface import implements, Interface
 from zope.component import adapts, getMultiAdapter
 
-from plone.contentrules.rule.interfaces import IRule, IExecutable
+from plone.contentrules.rule.interfaces import IRule
+from plone.contentrules.rule.interfaces import IExecutable
+from plone.contentrules.rule.interfaces import IRuleElementNode
+
+class Node(object):
+    implements(IRuleElementNode)
+    
+    def __init__(self, name, instance):
+        self.name = name
+        self.instance = instance
+        
 
 class Rule(Persistent):
     """A rule
@@ -30,7 +40,7 @@ class Rule(Persistent):
         for allElements in elements:
             theString += str(element)+"\n"
 
-class ExecutableRule(object):
+class RuleExecutable(object):
     """An adapter capable of executing a rule
     """
     
@@ -44,7 +54,7 @@ class ExecutableRule(object):
     
     def __call__(self):
         for element in self.rule.elements:
-            executable = getMultiAdapter((self.context, element, self.event), IExecutable)
+            executable = getMultiAdapter((self.context, element.instance, self.event), IExecutable)
             if not executable():
                 return False
         return True

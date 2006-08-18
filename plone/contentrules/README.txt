@@ -183,12 +183,12 @@ factory:
 
 The element, once created, now needs to be saved as part of a rule.  
 
-  >>> from plone.contentrules.rule.rule import Rule
+  >>> from plone.contentrules.rule.rule import Rule, Node
   >>> testRule = Rule()
   >>> testRule.title = "Fairly simple test rule"
   >>> testRule.description = "only contains move to folder action"
   >>> testRule.event = Interface
-  >>> testRule.elements.append(configuredAction) # selectedAction
+  >>> testRule.elements.append(Node('test.moveToFolder', configuredAction))
 
 Managing rules relative to objects
 ----------------------------------

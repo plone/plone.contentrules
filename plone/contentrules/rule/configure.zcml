@@ -1,5 +1,5 @@
 <configure xmlns="http://namespaces.zope.org/zope">
     
-    <adapter factory=".rule.ExecutableRule" />
+    <adapter factory=".rule.RuleExecutable" />
             
 </configure>
