@@ -1,7 +1,5 @@
 <configure xmlns="http://namespaces.zope.org/zope">
     
-    <utility factory=".storage.RuleStorage" />
-    
     <adapter factory=".manager.RuleManager" />
     
     <adapter factory=".executor.RuleExecutor" />

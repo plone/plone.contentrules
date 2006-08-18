@@ -19,7 +19,7 @@ class IExecutable(interface.Interface):
     to be executed when the rule that contains it is executed.
     """
     
-    def execute(context, event):
+    def __call__(context, event):
         """Execute the element.
         
         Context is the object the rule element is acting upon. 

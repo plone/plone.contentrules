@@ -15,8 +15,8 @@ First, create some rule elements.
   >>> from zope.component import getUtility, getAllUtilitiesRegisteredFor
   >>> from zope import schema
 
-  >>> from zope.app.testing.ztapi import provideUtility
-  >>> from zope.app.testing.ztapi import provideAdapter
+  >>> from zope.component import provideUtility
+  >>> from zope.component import provideAdapter
 
   >>> from plone.contentrules.rule.interfaces import IRuleCondition, IRuleAction
   >>> from plone.contentrules.rule.element import RuleCondition, RuleAction 
@@ -36,19 +36,24 @@ Creates the actual class for holding the configuration data:
   ...     targetFolder = ''
 
 In order to be able to execute the rule elements that form a rule, they must be
-adaptable to IExecutable
+adaptable to IExecutable. This should be a multi-adapter from 
+(context, element, event).
 
   >>> from plone.contentrules.rule.interfaces import IExecutable
+  >>> from zope.app.event.interfaces import IObjectEvent
+  
   >>> class MoveToFolderExecutor(object):
   ...     implements(IExecutable)
-  ...     adapts(IMoveToFolderAction)
-  ...     def __init__(self, context):
+  ...     adapts(Interface, IMoveToFolderAction, IObjectEvent)
+  ...     def __init__(self, context, element, event):
   ...         self.context = context
-  ...     def execute(self, context, event):
+  ...         self.element = element
+  ...         self.event = event
+  ...     def __call__(self):
   ...         print "Tried to execute MoveToFolderExecutor, but not implemented"
   ...         return True
 
-  >>> provideAdapter(IMoveToFolderAction, IExecutable, MoveToFolderExecutor)
+  >>> provideAdapter(MoveToFolderExecutor)
 
 Returning True in the above executor means that rule execution may continue
 with other elements
@@ -56,25 +61,22 @@ with other elements
 Using ZCML, a rule element will be created describing this rule. This will 
 result in an object like the one below.
 
-  >>> newElement = RuleAction()
-  >>> newElement.title = "Move To Folder"
-  >>> newElement.description = "Move an object to a folder"
-  >>> newElement.for_ = Interface
-  >>> newElement.event = None
-  >>> newElement.schema = IMoveToFolderAction
-  >>> newElement.factory = MoveToFolderAction
+  >>> moveElement = RuleAction()
+  >>> moveElement.title = "Move To Folder"
+  >>> moveElement.description = "Move an object to a folder"
+  >>> moveElement.for_ = Interface
+  >>> moveElement.event = IObjectEvent
+  >>> moveElement.schema = IMoveToFolderAction
+  >>> moveElement.factory = MoveToFolderAction
   
 The ZCML will register this as a utility providing IRuleAction.
 
-  >>> provideUtility(IRuleAction, newElement, "test.moveToFolder")
+  >>> provideUtility(moveElement, provides=IRuleAction, name="test.moveToFolder")
 
 See if it worked:
   
   >>> getUtility(IRuleAction, name="test.moveToFolder")
   <plone.contentrules.rule.element.RuleAction object at ...>
-
-
-
 
 For the second example, we will create a rule element to log caught events.
 First, let us make some sort of temporary logger:
@@ -86,53 +88,45 @@ First, let us make some sort of temporary logger:
   >>> handler.setFormatter(formatter)
   >>> logger.addHandler(handler)
 
-Calling logger.warning with a string element should now generate a message in stderr, like so:
-logger.warning("A monkey sneezed in the jungle.")
-
-should yield
-2006-08-15 00:07:56,148 - temporary_logger - WARNING - A monkey sneezed in the jungle.
-
 Again, we have to define an interface for the logger action:
 
   >>> class ILoggerAction(Interface):
   ...     targetLogger = schema.TextLine(title=u"target logger",default=u"temporary_logger")
-  ...         # this should end up being picked from a list
-  ...     loggingLevel = schema.TextLine(title=u"logging level", default = u"warning")
-  ...         # this too
+  ...     loggingLevel = schema.Int(title=u"logging level", default=1000)
   ...     loggerMessage = schema.TextLine(title=u"message",
   ...                                     description=u"&e = the triggering event, &c = the context",
   ...                                     default=u"caught &e at &c")
-  ...     # could also use logging.formatter syntax?
 
-a factory class holding configuration data:
+A factory class holding configuration data:
          
   >>> class LoggerAction(Persistent):
-  ...     implements (ILoggerAction)
+  ...     implements(ILoggerAction)
   ...     loggingLevel = ''
   ...     targetLogger = ''
   ...     message = ''
 
-as well as the executor that does the actual logging, capable of being adapted
-to IExecutable:
+As well as the executor that does the actual logging, capable of being adapted
+to IExecutable. In this case, it will adapt any context and any event.
 
   >>> class LoggerActionExecutor(object):
   ...     implements(IExecutable)
-  ...     adapts(ILoggerAction)
+  ...     adapts(Interface, ILoggerAction, Interface)
   ...    
-  ...     def __init__(self, context):
+  ...     def __init__(self, context, element, event):
   ...         self.context = context
-  ...     def execute(self, context, event):
+  ...         self.element = element
+  ...         self.event = event
+  ...     def __call__(self):
   ...        
-  ...         logger = logging.getLogger(self.context.targetLogger)
+  ...         logger = logging.getLogger(self.element.targetLogger)
   ...        
-  ...         processedMessage = self.context.message.replace("&e", repr(event))
-  ...         processedMessage = processedMessage.replace("&c", repr(context)) #... I know ... 
+  ...         processedMessage = self.element.message.replace("&e", str(self.event))
+  ...         processedMessage = processedMessage.replace("&c", str(self.context))
   ...   
-  ...         logger.warning(processedMessage) #ignores loggingLevel for the moment
-  ...         return True #logging shouldn't interrupt rule execution, for any reason
+  ...         logger.log(self.element.loggingLevel, processedMessage)
+  ...         return True 
 
-  >>> provideAdapter(ILoggerAction, IExecutable, LoggerActionExecutor)
-
+  >>> provideAdapter(LoggerActionExecutor)
 
 This element will also be created using ZCML, but we will create it manually for
 now:
@@ -144,7 +138,7 @@ now:
   >>> loggerElement.event = None
   >>> loggerElement.schema = ILoggerAction
   >>> loggerElement.factory = LoggerAction
-  >>> provideUtility(IRuleAction, loggerElement, "test.logger")
+  >>> provideUtility(loggerElement, provides=IRuleAction, name="test.logger")
 
 See if it worked:
   
@@ -164,9 +158,13 @@ given context, e.g.
   
   >>> availableActions = getAllUtilitiesRegisteredFor(IRuleAction)
   >>> filteredActions = [a for a in availableActions if a.for_.providedBy(currentContext)]
+  >>> moveElement in filteredActions
+  True
+  >>> loggerElement in filteredActions
+  True
 
-Suppose the user selected the first (and only) action in this list and wanted
-to use it in a rule:
+Suppose the user selected the first action in this list and wanted to use it in
+a rule:
 
   >>> selectedAction = filteredActions[0]
   
@@ -195,78 +193,41 @@ The element, once created, now needs to be saved as part of a rule.
 Managing rules relative to objects
 ----------------------------------
 
-Rules are bound to events and contexts. A context should be adaptable to
-ILocatable so that the rule storage can reference it.
+Rules are bound to events and contexts. A context should be IAnnotatable
+so that the rule manager can reference it.
 
 Create a fictional content object to use as a context.
 
-  >>> from plone.contentrules.engine.interfaces import ILocatable
+  >>> from zope.app.annotation.interfaces import IAttributeAnnotatable
 
-  >>> class IMyContent(Interface):
-  ...     path = schema.TextLine(title=u"Path of this object")
+  >>> class IMyContent(IAttributeAnnotatable):
+  ...     pass
 
   >>> class MyContent(object):
   ...     implements(IMyContent)
-  ...     path = ''
-
-  >>> class MyContentLocator(object):
-  ...     implements(ILocatable)
-  ...     adapts(IMyContent)
-  ...
-  ...     def __init__(self, context):
-  ...         self.context = context
-  ...     
-  ...     @property
-  ...     def location(self):
-  ...         return self.context.path
-  ...     
-  ...     def getObject(self):
-  ...         return self.context
-  
-  >>> provideAdapter(IMyContent, ILocatable, MyContentLocator)  
 
 The Rule manager ties to a localised object, say a folder, and acts like
-localised storage for rules. In our implementation, this is delegated to the 
-current rule storage. 
-
-The default implementation of the rule storage is volatile, storing rule 
-allocations in memory. A site-local persistent utility may override this in a 
-real-world implementation. 
-
-Ensure that the global version is registered first of all.
-
-  >>> from plone.contentrules.engine.interfaces import IRuleStorage
-  >>> ruleStorage = getUtility(IRuleStorage)
-  >>> ruleStorage
-  <plone.contentrules.engine.storage.RuleStorage object at ...>
+localised storage for rules.
   
 The user interface will obtain a rule manager for the current context when it 
 needs to retrieve or modify rules for that context. 
 
   >>> from plone.contentrules.engine.interfaces import IRuleManager
   >>> context = MyContent()
-  >>> context.path = "/some/path"
   
-  >>> locator = ILocatable(context)
-  >>> localRuleManager = IRuleManager(locator)
+  >>> localRuleManager = IRuleManager(context)
   
-  >>> tuple(localRuleManager.getRules())
-  ()
-  >>> tuple(ruleStorage.listRules())
+  >>> tuple(localRuleManager.listRules())
   ()
   
   >>> localRuleManager.saveRule(testRule)
-  >>> tuple(localRuleManager.getRules())
+  >>> tuple(localRuleManager.listRules())
   (<plone.contentrules.rule.rule.Rule object at ...>,)
-  >>> tuple(ruleStorage.listRules())
-  (<plone.contentrules.rule.rule.Rule object at ...>,)
-  >>> localRuleManager.getRules()[0] == testRule
+  >>> tuple(localRuleManager.listRules())[0] == testRule
   True
   
   >>> localRuleManager.removeRule(testRule)
-  >>> tuple(localRuleManager.getRules())
-  ()
-  >>> tuple(ruleStorage.listRules())
+  >>> tuple(localRuleManager.listRules())
   ()
   
   >>> localRuleManager.saveRule(testRule)
@@ -278,17 +239,19 @@ An event can trigger rules bound to a context. The event will use an
 IRuleExecutor to do so. 
   
   >>> from plone.contentrules.engine.interfaces import IRuleExecutor
-  >>> locator = ILocatable(context)
-  >>> localRuleExecutor = IRuleExecutor(locator)
+  >>> localRuleExecutor = IRuleExecutor(context)
   
 The executor method will be passed an event, so that rules may determine what 
 triggered them. Because this is a test, we registered the rule for the "event"
 described by "Interface". In fact, this would equate to a rule triggered by
 any and all events.
 
-  >>> localRuleExecutor.executeAll(Interface)
-  Tried to execute MoveToFolderExecutor, but not implemented
 
+  >>> from zope.app.event.objectevent import ObjectEvent
+  >>> someEvent = ObjectEvent(context)
+
+  >>> localRuleExecutor.executeAll(someEvent)
+  Tried to execute MoveToFolderExecutor, but not implemented
 
 
 To do
@@ -296,17 +259,12 @@ To do
 
 Stuff to test:
 
-- asserts still not working
 - executing a rule when you have elements that return false, ie stop execution
 - multiple rule elements
 - multiple rules
 - test event filtering
-
-demonstrate:
-- logging rule registered for Interface
+- extended API for RuleManager
 
 implement: 
 
-- update implementations from engine.interfaces!
-- filtering by event
 - storing rule element type in specificRule.elements

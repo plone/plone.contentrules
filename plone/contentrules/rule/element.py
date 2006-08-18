@@ -1,6 +1,6 @@
 from zope.interface import implements, Interface 
 
-from interfaces import IRuleElement, IRuleCondition, IRuleAction
+from plone.contentrules.rule.interfaces import IRuleElement, IRuleCondition, IRuleAction
 
 class RuleElement(object):
     """A rule element.

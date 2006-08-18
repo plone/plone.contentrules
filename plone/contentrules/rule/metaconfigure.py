@@ -1,8 +1,8 @@
 from zope.app.content.metaconfigure import utility
 from zope.interface import Interface
 
-from interfaces import IRuleCondition, IRuleAction
-from element import RuleCondition, RuleAction
+from plone.contentrules.rule.interfaces import IRuleCondition, IRuleAction
+from plone.contentrules.rule.element import RuleCondition, RuleAction
 
 def ruleConditionDirective(_context, name, title, \
         schema, factory, description="", for_=Interface):

@@ -1,9 +1,9 @@
 from persistent import Persistent
 
-from zope.interface import implements
-from zope.component import adapts
+from zope.interface import implements, Interface
+from zope.component import adapts, getMultiAdapter
 
-from interfaces import IRule, IExecutable
+from plone.contentrules.rule.interfaces import IRule, IExecutable
 
 class Rule(Persistent):
     """A rule
@@ -35,26 +35,16 @@ class ExecutableRule(object):
     """
     
     implements(IExecutable)
-    adapts(IRule)
+    adapts(Interface, IRule, Interface)
     
-    def __init__(self, context):
-        self.adapted=context
+    def __init__(self, context, rule, event):
+        self.context = context
+        self.rule = rule
+        self.event = event
     
-    def execute(self, context, event):
-        # Assert that the rule is triggered on an event it was registered for
-        import sys
-        
-        assert  type(event) == type(self.adapted.event)
-        
-        for element in self.adapted.elements:
-            # Assert element is applicable to this type of event (UI should
-            # enforce this)
-            
-            sys.stderr.write("\n**** commented malformed assert or worse in "
-                             "contentrules/rule/rule.py, roundabout line 53")
-            #assert element.event is None or isinstance(event, element.event)
-
-            executable=IExecutable(element)
-            if not executable.execute(context, event):
+    def __call__(self):
+        for element in self.rule.elements:
+            executable = getMultiAdapter((self.context, element, self.event), IExecutable)
+            if not executable():
                 return False
         return True
