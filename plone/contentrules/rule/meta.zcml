@@ -1,5 +1,6 @@
-<configure xmlns="http://namespaces.zope.org/zope"
-           xlmns:meta="http://namespaces.zope.org/meta">
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:meta="http://namespaces.zope.org/meta">
 
     <meta:directives namespace="http://namespaces.plone.org/plone">
         

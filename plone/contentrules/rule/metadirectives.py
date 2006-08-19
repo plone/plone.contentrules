@@ -31,6 +31,11 @@ class IRuleElementDirective(Interface):
         description = _(u"The interface this component is available for"),
         required = False)
     
+    event = configuration_fields.GlobalInterface(
+        title = _(u"Event"),
+        description = _(u"The event this component is available for"),
+        required = False)
+    
     schema = configuration_fields.GlobalInterface(
         title = _(u"Schema"),
         description = _(u"Schema for element configuration"),
