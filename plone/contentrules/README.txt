@@ -29,7 +29,7 @@ rule element. This allows zope to create a form.
   >>> class IMoveToFolderAction(Interface):
   ...     targetFolder = schema.TextLine(title=u"Target Folder")
   
-Creates the actual class for holding the configuration data:
+Create the actual class for holding the configuration data:
   
   >>> class MoveToFolderAction(Persistent):
   ...     implements (IMoveToFolderAction)
@@ -144,7 +144,46 @@ See if it worked:
   
   >>> getUtility(IRuleAction, name="test.logger")
   <plone.contentrules.rule.element.RuleAction object at ...>
+
+
+Last, we will create a generic rule element that stops rule execution. The 
+interface to this rule will not need to specify any fields, and the
+configuration class will not need to hold any data - but they must still be 
+present:
+
+  >>> class IHaltExecutionAction(Interface):
+  ...     pass
+
+  >>> class HaltExecutionAction(Persistent):
+  ...     implements (IHaltExecutionAction)
+
+  >>> class HaltExecutionExecutor(object):
+  ...     implements(IExecutable)
+  ...     adapts(Interface, IHaltExecutionAction, Interface)
+  ...     # Above: the second "Interface" causes this
+  ...     # element to be available for every event
+  ...     def __init__(self, context, element, event):
+  ...         self.context = context
+  ...         self.element = element
+  ...         self.event = event
+  ...     def __call__(self):
+  ...         print "Rule Execution aborted at HaltAction"
+  ...         return False  # False = Stop Execution! This is the payload.
   
+  >>> provideAdapter(HaltExecutionExecutor)
+
+  >>> haltElement = RuleAction()
+  >>> haltElement.title = "Halt Rule Execution"
+  >>> haltElement.description = "Prevent further elements from executing for an event"
+  >>> haltElement.for_ = Interface
+  >>> haltElement.event = None
+  >>> haltElement.schema = IHaltExecutionAction
+  >>> haltElement.factory = HaltExecutionAction
+  >>> provideUtility(haltElement, provides=IRuleAction, name="test.halt")
+
+
+  >>> getUtility(IRuleAction, name="test.halt")
+  <plone.contentrules.rule.element.RuleAction object at ...>
 
 Composing elements into rules
 ------------------------------
@@ -162,7 +201,10 @@ given context, e.g.
   True
   >>> loggerElement in filteredActions
   True
-
+  >>> haltElement in filteredActions
+  True
+  
+  
 Suppose the user selected the first action in this list and wanted to use it in
 a rule:
 
@@ -186,9 +228,23 @@ The element, once created, now needs to be saved as part of a rule.
   >>> from plone.contentrules.rule.rule import Rule, Node
   >>> testRule = Rule()
   >>> testRule.title = "Fairly simple test rule"
-  >>> testRule.description = "only contains move to folder action"
+  >>> testRule.description = "some test actions"
   >>> testRule.event = Interface
   >>> testRule.elements.append(Node('test.moveToFolder', configuredAction))
+  
+Rules can have many elements. To demonstrate, we will first add the element 
+again, so it executes twice:
+
+  >>> testRule.elements.append(Node('test.moveToFolder', configuredAction))
+
+Additionally, we will manually add two halt actions, to see if rules really 
+stop executing:
+
+  >>> HaltActionInstance = getUtility(IRuleAction, name="test.halt").factory()
+  >>> testRule.elements.append(Node('test.halt', HaltActionInstance))
+  >>> testRule.elements.append(Node('test.halt', HaltActionInstance))
+
+The second halt action should never get executed.
 
 Managing rules relative to objects
 ----------------------------------
@@ -252,6 +308,9 @@ any and all events.
 
   >>> localRuleExecutor.executeAll(someEvent)
   Tried to execute MoveToFolderExecutor, but not implemented
+  Tried to execute MoveToFolderExecutor, but not implemented
+  Rule Execution aborted at HaltAction
+
 
 
 To do
@@ -259,8 +318,6 @@ To do
 
 Stuff to test:
 
-- executing a rule when you have elements that return false, ie stop execution
-- multiple rule elements
 - multiple rules
 - test event filtering
 - extended API for RuleManager
