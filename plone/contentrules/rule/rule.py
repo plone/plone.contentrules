@@ -34,11 +34,15 @@ class Rule(Persistent):
             self.elements = elements
     
     def __str__(self):
-        theString = u"ContentRule %(title)s:\n %(description)s\n" \
+        theString = u"ContentRule %(title)s:\n| %(description)s\n|" \
             %{'title':self.title, 'description':self.description}
-
-        for allElements in elements:
-            theString += str(element)+"\n"
+        
+        count = 0
+        for allElements in self.elements:
+            theString += "%3i: (%s) %s\n|" % (count,allElements.name,str(allElements.instance))
+            count+=1
+            
+        return theString
 
 class RuleExecutable(object):
     """An adapter capable of executing a rule

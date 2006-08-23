@@ -246,6 +246,14 @@ stop executing:
 
 The second halt action should never get executed.
 
+This second test rule will be used to demonstrate how rules get executed
+
+  >>> testRule2 = Rule()
+  >>> testRule2.title = "Another fairly simple test rule"
+  >>> testRule2.description = "only containing a moveToFolderAction"
+  >>> testRule2.event = Interface
+  >>> testRule2.elements.append(Node('test.moveToFolder', configuredAction))
+
 Managing rules relative to objects
 ----------------------------------
 
@@ -286,8 +294,33 @@ needs to retrieve or modify rules for that context.
   >>> tuple(localRuleManager.listRules())
   ()
   
+Saving the same rule instance twice only yields one rule:
+
   >>> localRuleManager.saveRule(testRule)
+  >>> localRuleManager.saveRule(testRule)
+  >>> tuple(localRuleManager.listRules())
+  (<plone.contentrules.rule.rule.Rule object at ...>,)
   
+  >>> localRuleManager.saveRule(testRule2)
+  >>> tuple(localRuleManager.listRules())
+  (<plone.contentrules.rule.rule.Rule object at ...>, <plone.contentrules.rule.rule.Rule object at ...>)
+
+Summary of Rules:
+
+  >>> for eachRule in localRuleManager.listRules():
+  ...     print eachRule
+  ContentRule Fairly simple test rule:
+  | some test actions
+  |  0: (test.moveToFolder) <MoveToFolderAction object at ...>
+  |  1: (test.moveToFolder) <MoveToFolderAction object at ...>
+  |  2: (test.halt) <HaltExecutionAction object at ...>
+  |  3: (test.halt) <HaltExecutionAction object at ...>
+  |
+  ContentRule Another fairly simple test rule:
+  | only containing a moveToFolderAction
+  |  0: (test.moveToFolder) <MoveToFolderAction object at ...>
+  |
+
 Executing rules
 ---------------
 
@@ -310,15 +343,16 @@ any and all events.
   Tried to execute MoveToFolderExecutor, but not implemented
   Tried to execute MoveToFolderExecutor, but not implemented
   Rule Execution aborted at HaltAction
+  Tried to execute MoveToFolderExecutor, but not implemented
 
-
+The first three output lines above are from the first rule, the fourth from the 
+second rule.
 
 To do
 -----
 
 Stuff to test:
 
-- multiple rules
 - test event filtering
 - extended API for RuleManager
 

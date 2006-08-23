@@ -20,6 +20,7 @@ class RuleExecutor(object):
     def execute(self, rule, event):
         executable = getMultiAdapter((self.context, rule, event), IExecutable)
         executable()
+        
     
     def executeAll(self, event):
         manager = IRuleManager(self.context)
