@@ -1,4 +1,4 @@
-from zope.interface import implements
+from zope.interface import implements, providedBy
 from zope.component import adapts, getAllUtilitiesRegisteredFor
 
 from zope.annotation.interfaces import IAnnotations
@@ -53,9 +53,10 @@ class RuleManager(object):
                     c.for_ is None or c.for_.providedBy(self.context)]
         
     def getAvailableActions(self, eventInstance):
+        eventInterface = [a for a in providedBy(eventInstance).flattened()][0]
         actions = getAllUtilitiesRegisteredFor(IRuleAction)
         return [a for a in actions if 
-                    (a.event is None or a.event.providedBy(eventInstance)) and
+                    (a.event is None or a.event.isOrExtends(eventInterface)) and
                     (a.for_ is None or a.for_.providedBy(self.context))]
         
     def allAvailableActions(self):

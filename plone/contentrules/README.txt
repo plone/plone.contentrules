@@ -348,6 +348,105 @@ any and all events.
 The first three output lines above are from the first rule, the fourth from the 
 second rule.
 
+
+Event Filtering
+---------------
+
+Rule elements can be specific to certain events. To create some event-specific
+rule elements, first import the specific events
+
+  >>> from zope.component.interfaces import IObjectEvent, ObjectEvent
+  >>> from zope.lifecycleevent.interfaces import IObjectCreatedEvent, \
+  ...                                            IObjectCopiedEvent, \
+  ...                                            IObjectModifiedEvent
+ 
+The hierarchy for these events is:
+
+Interface
+- IObjectEvent
+- - IObjectModifiedEvent
+- - IObjectCreatedEvent
+- - - IObjectCopiedEvent
+
+An element for IObjectCreatedEvent:
+
+  >>> class IObjectCreatedSpecificAction(Interface):
+  ...     pass
+  >>> class ObjectCreatedSpecificAction(Persistent):
+  ...     implements (IObjectCreatedSpecificAction)
+  >>> class ObjectCreatedExecutor(object):
+  ...     implements(IExecutable)
+  ...     adapts(Interface, IObjectCreatedSpecificAction, IObjectCreatedEvent) #!
+  ...     def __init__(self, context, element, event):
+  ...         self.context = context
+  ...         self.element = element
+  ...         self.event = event
+  ...     def __call__(self):
+  ...         return True
+  >>> provideAdapter(ObjectCreatedExecutor)
+  >>> objectCreatedSpecificElement = RuleAction()
+  >>> objectCreatedSpecificElement.title = "Object Created specific action"
+  >>> objectCreatedSpecificElement.description = "is only available for object created events"
+  >>> objectCreatedSpecificElement.for_ = Interface       #!
+  >>> objectCreatedSpecificElement.event = IObjectCreatedEvent #!
+  >>> objectCreatedSpecificElement.schema = IObjectCreatedSpecificAction
+  >>> objectCreatedSpecificElement.factory = ObjectCreatedSpecificAction
+  >>> provideUtility(objectCreatedSpecificElement, provides=IRuleAction, name="test.objectcreated")
+  >>> getUtility(IRuleAction, name="test.objectcreated")
+  <plone.contentrules.rule.element.RuleAction object at ...>
+
+
+An element for IObjectCopiedEvent:
+
+  >>> class IObjectCopiedSpecificAction(Interface):
+  ...     pass
+  >>> class ObjectCopiedSpecificAction(Persistent):
+  ...     implements (IObjectCopiedSpecificAction)
+  >>> class ObjectCopiedExecutor(object):
+  ...     implements(IExecutable)
+  ...     adapts(Interface, IObjectCopiedSpecificAction, IObjectCopiedEvent) #!
+  ...     def __init__(self, context, element, event):
+  ...         self.context = context
+  ...         self.element = element
+  ...         self.event = event
+  ...     def __call__(self):
+  ...         return True
+  >>> provideAdapter(ObjectCopiedExecutor)
+  >>> objectCreatedSpecificElement = RuleAction()
+  >>> objectCreatedSpecificElement.title = "Object Copied Specific Action"
+  >>> objectCreatedSpecificElement.description = "is only available for object created events"
+  >>> objectCreatedSpecificElement.for_ = Interface       #!
+  >>> objectCreatedSpecificElement.event = IObjectCopiedEvent #!
+  >>> objectCreatedSpecificElement.schema = IObjectCopiedSpecificAction
+  >>> objectCreatedSpecificElement.factory = ObjectCopiedSpecificAction
+  >>> provideUtility(objectCreatedSpecificElement, provides=IRuleAction, name="test.objectcopied")
+  >>> getUtility(IRuleAction, name="test.objectcopied")
+  <plone.contentrules.rule.element.RuleAction object at ...>
+
+All elements so far:
+
+  >>> map(lambda x: x.title, localRuleManager.allAvailableActions())
+  ['Move To Folder', 'Log Event', 'Halt Rule Execution', 'Object Created specific action', 'Object Copied Specific Action']
+
+Filtering for specific events:
+
+  >>> from zope.component.interfaces import ObjectEvent
+  >>> from zope.lifecycleevent import ObjectCreatedEvent, ObjectCopiedEvent
+  >>> newContext = MyContent()
+  
+  >>> firedEvent = ObjectEvent(currentContext)
+  >>> sorted([a.title for a in localRuleManager.getAvailableActions(firedEvent)])
+  ['Halt Rule Execution', 'Log Event', 'Move To Folder', 'Object Copied Specific Action', 'Object Created specific action']
+  >>> firedEvent = ObjectCreatedEvent(newContext)
+  >>> sorted([a.title for a in localRuleManager.getAvailableActions(firedEvent)])
+  ['Halt Rule Execution', 'Log Event', 'Object Copied Specific Action', 'Object Created specific action']
+  
+  >>> firedEvent = ObjectCopiedEvent(currentContext, newContext)
+  >>> sorted([a.title for a in localRuleManager.getAvailableActions(firedEvent)])
+  ['Halt Rule Execution', 'Log Event', 'Object Copied Specific Action']
+
+
+  
 To do
 -----
 
