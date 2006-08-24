@@ -22,7 +22,7 @@ def ruleConditionDirective(_context, name, title, \
     
     
 def ruleActionDirective(_context, name, title, \
-        schema, factory, description="", for_=Interface, event=Interface):
+        addview, editview, description="", for_=Interface, event=Interface):
     """Register a utility for IRuleAction based on the parameters in the zcml directive
     
     """
