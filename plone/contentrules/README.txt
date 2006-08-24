@@ -437,6 +437,7 @@ Filtering for specific events:
   >>> firedEvent = ObjectEvent(currentContext)
   >>> sorted([a.title for a in localRuleManager.getAvailableActions(firedEvent)])
   ['Halt Rule Execution', 'Log Event', 'Move To Folder', 'Object Copied Specific Action', 'Object Created specific action']
+  
   >>> firedEvent = ObjectCreatedEvent(newContext)
   >>> sorted([a.title for a in localRuleManager.getAvailableActions(firedEvent)])
   ['Halt Rule Execution', 'Log Event', 'Object Copied Specific Action', 'Object Created specific action']
@@ -452,7 +453,6 @@ To do
 
 Stuff to test:
 
-- test event filtering
 - extended API for RuleManager
 
 implement: 
