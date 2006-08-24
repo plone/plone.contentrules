@@ -5,15 +5,15 @@ from plone.contentrules.rule.interfaces import IRuleCondition, IRuleAction
 from plone.contentrules.rule.element import RuleCondition, RuleAction
 
 def ruleConditionDirective(_context, name, title, \
-        schema, factory, description="", for_=Interface, event=Interface):
+        addview, editview, description="", for_=Interface, event=Interface):
     """Register a utility for IRuleCondition based on the parameters in the zcml directive
     
     """
     
     condition = RuleCondition()
     condition.title = title
-    condition.schema = schema
-    condition.factory = factory
+    condition.addview = addview
+    condition.editview = editview
     condition.description = description
     condition.for_ = for_
     condition.event = event
@@ -29,8 +29,8 @@ def ruleActionDirective(_context, name, title, \
     
     action = RuleAction()
     action.title = title
-    action.schema = schema
-    action.factory = factory
+    action.addview = addview
+    action.editview = editview
     action.description = description
     action.for_ = for_
     action.event = event

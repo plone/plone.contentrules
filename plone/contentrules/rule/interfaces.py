@@ -32,14 +32,14 @@ class IRuleElement(Interface):
                        'it is not event specific.',
         required = False)
         
-    schema = configuration_fields.GlobalInterface(
-        title = u'Schema',
-        description = u'Schema for element configuration',
+    addview = schema.TextLine(
+        title = u'Add view',
+        description = u'The name of the add view',
         required = True)
     
-    factory = configuration_fields.GlobalObject(
-        title = u"Factory",
-        description = u"Factory for persistent rule element, must be adaptable to IExecutable",
+    editview = schema.TextLine(
+        title = u"Edit view",
+        description = u"The name of the edit view",
         required = True)
 
 class IRuleCondition(IRuleElement):

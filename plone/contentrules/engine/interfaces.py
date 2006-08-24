@@ -6,9 +6,22 @@ from zope.interface import Interface
 from zope import schema
 
 from zope.annotation.interfaces import IAttributeAnnotatable
+from zope.app.container.interfaces import IAdding
 
 class IRuleContainer(IAttributeAnnotatable):
     """Marker interface for objects that can store rules.
+    """
+    
+class IRuleAdding(IAdding):
+    """Marker interface for rule add views.
+    
+    Rules' addviews should be registered for this.
+    """
+    
+class IRuleElementAdding(IAdding):
+    """Marker interface for rule element (actions/conditions) add views.
+    
+    Rules' addviews should be registered for this.
     """
 
 class IRuleManager(Interface):

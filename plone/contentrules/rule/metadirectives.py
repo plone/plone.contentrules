@@ -36,14 +36,14 @@ class IRuleElementDirective(Interface):
         description = _(u"The event this component is available for"),
         required = False)
     
-    schema = configuration_fields.GlobalInterface(
-        title = _(u"Schema"),
-        description = _(u"Schema for element configuration"),
+    addview = schema.TextLine(
+        title = _(u"Add view"),
+        description = _(u"Name of the add view"),
         required = True)
     
-    factory = configuration_fields.GlobalObject(
-        title = _(u"Factory"),
-        description = _(u"Factory for persistent rule element, must be adaptable to IExecutable"),
+    editview = configuration_fields.GlobalObject(
+        title = _(u"Edit view"),
+        description = _(u"Name of the edit view"),
         required = True)
         
 class IRuleActionDirective(IRuleElementDirective):

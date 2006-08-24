@@ -66,8 +66,8 @@ result in an object like the one below.
   >>> moveElement.description = "Move an object to a folder"
   >>> moveElement.for_ = Interface
   >>> moveElement.event = IObjectEvent
-  >>> moveElement.schema = IMoveToFolderAction
-  >>> moveElement.factory = MoveToFolderAction
+  >>> moveElement.addview = 'test.moveToFolder'
+  >>> moveElement.editview = 'edit.html'
   
 The ZCML will register this as a utility providing IRuleAction.
 
@@ -136,8 +136,8 @@ now:
   >>> loggerElement.description = "Log the caught event to a target log"
   >>> loggerElement.for_ = Interface
   >>> loggerElement.event = None
-  >>> loggerElement.schema = ILoggerAction
-  >>> loggerElement.factory = LoggerAction
+  >>> loggerElement.addview = 'test.logger'
+  >>> loggerElement.editview = 'edit.html'
   >>> provideUtility(loggerElement, provides=IRuleAction, name="test.logger")
 
 See if it worked:
@@ -177,8 +177,8 @@ present:
   >>> haltElement.description = "Prevent further elements from executing for an event"
   >>> haltElement.for_ = Interface
   >>> haltElement.event = None
-  >>> haltElement.schema = IHaltExecutionAction
-  >>> haltElement.factory = HaltExecutionAction
+  >>> haltElement.addview = 'test.haltExecution'
+  >>> haltElement.editview = 'edit.html'
   >>> provideUtility(haltElement, provides=IRuleAction, name="test.halt")
 
 
@@ -210,15 +210,10 @@ a rule:
 
   >>> selectedAction = filteredActions[0]
   
-At this point, the UI would use the schema to create a form to configure the
-instance of this rule element:
+At this point, the UI would use the 'addview' to create a form to configure the
+instance of this rule element.
 
-  >>> formSchema = selectedAction.schema
-  
-When saved, the form would be saved into an object as created by the element's
-factory:
-
-  >>> configuredAction = selectedAction.factory()
+  >>> configuredAction = MoveToFolderAction()
   >>> configuredAction.targetFolder = "/foo"
   >>> configuredAction
   <MoveToFolderAction object at ...>
@@ -240,9 +235,9 @@ again, so it executes twice:
 Additionally, we will manually add two halt actions, to see if rules really 
 stop executing:
 
-  >>> HaltActionInstance = getUtility(IRuleAction, name="test.halt").factory()
-  >>> testRule.elements.append(Node('test.halt', HaltActionInstance))
-  >>> testRule.elements.append(Node('test.halt', HaltActionInstance))
+  >>> haltActionInstance = HaltExecutionAction()
+  >>> testRule.elements.append(Node('test.halt', haltActionInstance))
+  >>> testRule.elements.append(Node('test.halt', haltActionInstance))
 
 The second halt action should never get executed.
 
@@ -389,8 +384,8 @@ An element for IObjectCreatedEvent:
   >>> objectCreatedSpecificElement.description = "is only available for object created events"
   >>> objectCreatedSpecificElement.for_ = Interface       #!
   >>> objectCreatedSpecificElement.event = IObjectCreatedEvent #!
-  >>> objectCreatedSpecificElement.schema = IObjectCreatedSpecificAction
-  >>> objectCreatedSpecificElement.factory = ObjectCreatedSpecificAction
+  >>> objectCreatedSpecificElement.addview = 'testing.created'
+  >>> objectCreatedSpecificElement.editview = 'edit.html'
   >>> provideUtility(objectCreatedSpecificElement, provides=IRuleAction, name="test.objectcreated")
   >>> getUtility(IRuleAction, name="test.objectcreated")
   <plone.contentrules.rule.element.RuleAction object at ...>
@@ -417,8 +412,8 @@ An element for IObjectCopiedEvent:
   >>> objectCreatedSpecificElement.description = "is only available for object created events"
   >>> objectCreatedSpecificElement.for_ = Interface       #!
   >>> objectCreatedSpecificElement.event = IObjectCopiedEvent #!
-  >>> objectCreatedSpecificElement.schema = IObjectCopiedSpecificAction
-  >>> objectCreatedSpecificElement.factory = ObjectCopiedSpecificAction
+  >>> objectCreatedSpecificElement.addview = 'testing.created'
+  >>> objectCreatedSpecificElement.editview = 'edit.html'
   >>> provideUtility(objectCreatedSpecificElement, provides=IRuleAction, name="test.objectcopied")
   >>> getUtility(IRuleAction, name="test.objectcopied")
   <plone.contentrules.rule.element.RuleAction object at ...>
