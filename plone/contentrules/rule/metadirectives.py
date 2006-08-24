@@ -41,7 +41,7 @@ class IRuleElementDirective(Interface):
         description = _(u"Name of the add view"),
         required = True)
     
-    editview = configuration_fields.GlobalObject(
+    editview = schema.TextLine(
         title = _(u"Edit view"),
         description = _(u"Name of the edit view"),
         required = True)

@@ -1,6 +1,6 @@
 Metadata-Version: 1.0
 Name: plone.contentrules
-Version: 0.1dev
+Version: 0.1dev-r10507
 Summary: Plone ContentRules Engine
 Home-page: http://svn.plone.org/svn/plone/plone.contentrules
 Author: Markus Fuhrer
