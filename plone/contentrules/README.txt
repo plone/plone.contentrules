@@ -244,7 +244,7 @@ The second halt action should never get executed.
 This second test rule will be used to demonstrate how rules get executed
 
   >>> testRule2 = Rule()
-  >>> testRule2.title = "Another fairly simple test rule"
+  >>> testRule2.title = "A fairly simple test rule"
   >>> testRule2.description = "only containing a moveToFolderAction"
   >>> testRule2.event = Interface
   >>> testRule2.elements.append(Node('test.moveToFolder', configuredAction))
@@ -266,7 +266,16 @@ Create a fictional content object to use as a context.
   ...     implements(IMyContent)
 
 The Rule manager ties to a localised object, say a folder, and acts like
-localised storage for rules.
+localised storage for rules. It locates rules based on unique integer ids.
+Before a rule is saved, it has no name, and no parent.
+
+  >>> from zope.location import ILocation
+  >>> ILocation.providedBy(testRule)
+  True
+  >>> testRule.__name__ is None
+  True
+  >>> testRule.__parent__ is None
+  True
   
 The user interface will obtain a rule manager for the current context when it 
 needs to retrieve or modify rules for that context. 
@@ -276,33 +285,41 @@ needs to retrieve or modify rules for that context.
   
   >>> localRuleManager = IRuleManager(context)
   
-  >>> tuple(localRuleManager.listRules())
-  ()
+The rule manager acts as a container.
   
-  >>> localRuleManager.saveRule(testRule)
-  >>> tuple(localRuleManager.listRules())
+  >>> from zope.app.container.interfaces import IContainer
+  >>> IContainer.providedBy(localRuleManager)
+  True
+  >>> len(localRuleManager)
+  0
+  
+A name chooser exists to pick appropriate keys, since meaningful rules don't
+have naturally meaningful keys.
+
+  >>> from zope.app.container.interfaces import INameChooser
+  >>> chooser = INameChooser(localRuleManager)
+  >>> testRuleName = chooser.chooseName('', testRule)
+  
+  >>> localRuleManager[testRuleName] = testRule
+  >>> testRule.__name__
+  u'0'
+  >>> testRule.__parent__ is context
+  True
+  >>> tuple(localRuleManager.values())
   (<plone.contentrules.rule.rule.Rule object at ...>,)
-  >>> tuple(localRuleManager.listRules())[0] == testRule
+  >>> localRuleManager['0'] == testRule
   True
   
-  >>> localRuleManager.removeRule(testRule)
-  >>> tuple(localRuleManager.listRules())
-  ()
+  >>> del localRuleManager['0']
+  >>> len(localRuleManager)
+  0
   
-Saving the same rule instance twice only yields one rule:
+Add some rules again so we can use them later.
 
-  >>> localRuleManager.saveRule(testRule)
-  >>> localRuleManager.saveRule(testRule)
-  >>> tuple(localRuleManager.listRules())
-  (<plone.contentrules.rule.rule.Rule object at ...>,)
-  
-  >>> localRuleManager.saveRule(testRule2)
-  >>> tuple(localRuleManager.listRules())
-  (<plone.contentrules.rule.rule.Rule object at ...>, <plone.contentrules.rule.rule.Rule object at ...>)
+  >>> localRuleManager[chooser.chooseName('', testRule)] = testRule
+  >>> localRuleManager[chooser.chooseName('', testRule2)] = testRule2
 
-Summary of Rules:
-
-  >>> for eachRule in localRuleManager.listRules():
+  >>> for eachRule in sorted(localRuleManager.values()):
   ...     print eachRule
   ContentRule Fairly simple test rule:
   | some test actions
@@ -311,7 +328,7 @@ Summary of Rules:
   |  2: (test.halt) <HaltExecutionAction object at ...>
   |  3: (test.halt) <HaltExecutionAction object at ...>
   |
-  ContentRule Another fairly simple test rule:
+  ContentRule A fairly simple test rule:
   | only containing a moveToFolderAction
   |  0: (test.moveToFolder) <MoveToFolderAction object at ...>
   |

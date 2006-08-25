@@ -21,7 +21,6 @@ class RuleExecutor(object):
         executable = getMultiAdapter((self.context, rule, event), IExecutable)
         executable()
         
-    
     def executeAll(self, event):
         manager = IRuleManager(self.context)
         for rule in manager.getRules(event):

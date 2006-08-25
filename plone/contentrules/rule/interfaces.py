@@ -2,9 +2,13 @@
 """
 __docformat__ = 'restructuredtext'
 
-from zope.configuration import fields as configuration_fields
 from zope.interface import Interface
+
+from zope.location.interfaces import ILocation
 from zope import schema
+from zope.configuration import fields as configuration_fields
+
+
 
 class IRuleElement(Interface):
     """Base interface for rule elements (actions and conditions)
@@ -72,13 +76,15 @@ class IRuleElementNode(Interface):
                              required = True,
                              readonly = True)
 
-class IRule(Interface):
+class IRule(ILocation):
     """A rule - a collection of rule elements.
     
     A rule is composed, normally through the user interface, of conditions and
     actions. Upon some event, rules that are relevant in the given context will
     be executed by adapting them to IExecutable and running its execute()
     method.
+    
+    When saved in a rule manager, it will be given a name.
     """
     
     title = schema.TextLine(title = u'Title',

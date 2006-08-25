@@ -1,7 +1,8 @@
 <configure xmlns="http://namespaces.zope.org/zope">
     
-    <adapter factory=".manager.RuleManager" />
-    
+    <adapter factory=".manager.RuleManager" 
+             provides=".interfaces.IRuleManager" />
+    <adapter factory=".manager.RuleNameChooser" />
     <adapter factory=".executor.RuleExecutor" />
     
 </configure>

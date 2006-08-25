@@ -5,6 +5,7 @@ __docformat__ = 'restructuredtext'
 from zope.interface import Interface
 from zope import schema
 
+from zope.app.container.interfaces import IContainer
 from zope.annotation.interfaces import IAttributeAnnotatable
 from zope.app.container.interfaces import IAdding
 
@@ -24,13 +25,17 @@ class IRuleElementAdding(IAdding):
     Rules' addviews should be registered for this.
     """
 
-class IRuleManager(Interface):
+class IRuleManager(IContainer):
     """An object that is capable of managing rules
     
     Typically, a content object will be adapted to this interface
     """
     
-    def getAvailableConditions(event):
+    def getRules(event):
+        """Get all rules registered for the given event.
+        """
+    
+    def getAvailableConditions(eventInstance):
         """Get a list of all IRuleConditions applicable to the given event.
         Also includes non-event-specific elements!
         """
@@ -40,7 +45,7 @@ class IRuleManager(Interface):
         keys. One key will be None, for the non-event-specific elements.
         """
         
-    def getAvailableActions(event):
+    def getAvailableActions(eventInstance):
         """Get a list of all IRuleActions applicable to the given event.
         Also includes non-event-specific elements!
         """
@@ -48,23 +53,6 @@ class IRuleManager(Interface):
     def allAvailableActions():
         """Return a mapping of all available IRuleActions, with events as
         keys. One key will be None, for the non-event-specific elements.
-        """
-    
-    def getRules(event):
-        """Get a list of all the IRules in this context applicable to the
-        given event.
-        """
-        
-    def listRules():
-        """Get a list of all rules in this context (for all events).
-        """
-        
-    def saveRule(rule):
-        """Add or update a given rule
-        """
-    
-    def removeRule(rule):
-        """Remove a given rule
         """
 
 class IRuleExecutor(Interface):

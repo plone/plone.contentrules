@@ -25,14 +25,15 @@ class Rule(Persistent):
     description = u''
     event = None
     elements = []
-
+    __name__ = None
+    __parent__ = None
+    
     def __init__(self, elements=None):
-        """get a list of elements, test each, if they work, append?"""
         if elements is None:
             self.elements = []
         else:
             self.elements = elements
-    
+        
     def __str__(self):
         theString = u"ContentRule %(title)s:\n| %(description)s\n|" \
             %{'title':self.title, 'description':self.description}
