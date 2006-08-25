@@ -1,4 +1,5 @@
 from persistent import Persistent
+from persistent.list import PersistentList
 
 from zope.interface import implements, Interface
 from zope.component import adapts, getMultiAdapter
@@ -7,16 +8,15 @@ from plone.contentrules.rule.interfaces import IRule
 from plone.contentrules.rule.interfaces import IExecutable
 from plone.contentrules.rule.interfaces import IRuleElementNode
 
-class Node(object):
+class Node(Persistent):
     implements(IRuleElementNode)
     
     def __init__(self, name, instance):
         self.name = name
         self.instance = instance
         
-
 class Rule(Persistent):
-    """A rule
+    """A rule.
     """
 
     implements(IRule)
@@ -24,13 +24,12 @@ class Rule(Persistent):
     title = u''
     description = u''
     event = None
-    elements = []
     __name__ = None
     __parent__ = None
     
     def __init__(self, elements=None):
         if elements is None:
-            self.elements = []
+            self.elements = PersistentList()
         else:
             self.elements = elements
         
