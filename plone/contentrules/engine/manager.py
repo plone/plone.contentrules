@@ -4,9 +4,7 @@ from zope.exceptions import UserError
 
 from zope.annotation.interfaces import IAnnotations
 
-from zope.app.container.sample import SampleContainer
 from zope.app.container.contained import Contained, setitem
-from zope.app.container.interfaces import INameChooser
 
 from plone.contentrules.engine.interfaces import IRuleManager
 from plone.contentrules.engine.interfaces import IRuleContainer
@@ -14,11 +12,11 @@ from plone.contentrules.engine.interfaces import IRuleContainer
 from plone.contentrules.rule.interfaces import IRuleCondition
 from plone.contentrules.rule.interfaces import IRuleAction
 
-from BTrees.OOBTree import OOBTree
+from BTrees.IOBTree import IOBTree
 
 KEY = 'plone.contentrules.localrules'
 
-class RuleManager(SampleContainer):
+class RuleManager(object):
     """Allow any annotatable object to store context-specific rules.
     """
     
@@ -27,26 +25,85 @@ class RuleManager(SampleContainer):
 
     def __init__(self, context):
         self.context = context
-        SampleContainer.__init__(self)
-
-    def _newContainerData(self):
-        """Satisfy SampleContainer.
+        self.annotations = IAnnotations(self.context)
         
-        Get rules from an annotations key, stored in an OOBTree.
+    def _getContainerData(self, create=False):
+        """Get rules from an annotations key, stored in an OOBTree.
+        
+        If create is True, create the annotation key if it's missing.
+        Otherwise, {} is returned.
         """
-        annotations = IAnnotations(self.context)
-        rules = annotations.get(KEY, None)
+        rules = self.annotations.get(KEY, None)
+        if rules is None and create:
+            self.annotations[KEY] = IOBTree()
+            rules = self.annotations[KEY]
         if rules is None:
-            annotations[KEY] = OOBTree()
-            rules = annotations[KEY]
+            return {}
         return rules
         
-    def __setitem__(self, key, object):
-        """Let the parent of the rule be the actual context, not this adapter
+    def _key(self, key):
+        """Make the key into an int. If conversion fails, raise KeyError,
+        not ValueError (since it means we were passed a bogus key).
         """
-        data = self._newContainerData()
-        setitem(self, data.__setitem__, key, object)
-        object.__parent__ = self.context
+        try:
+            return int(key)
+        except ValueError:
+            raise KeyError, key
+
+    def keys(self):
+        return self._getContainerData().keys()
+
+    def __iter__(self):
+        return iter(self._getContainerData())
+
+    def __getitem__(self, key):
+        return self._getContainerData()[self._key(key)]
+
+    def get(self, key, default=None):
+        return self._getContainerData().get(self._key(key), default)
+
+    def values(self):
+        return self._getContainerData().values()
+
+    def __len__(self):
+        return len(self._getContainerData())
+
+    def items(self):
+        return self._getContainerData().items()
+
+    def __contains__(self, key):
+        return bool(self._getContainerData().has_key(self._key(key)))
+
+    has_key = __contains__
+    
+    def __delitem__(self, key):
+        key = self._key(key)
+        data = self._getContainerData()
+        rule = data[key]
+        del data[key]
+        
+        rule.__parent__ = None
+        rule.__name__ = None
+        
+    def saveRule(self, rule):
+        data = self._getContainerData(True)
+        key = getattr(rule, '__name__', None)
+        if key is not None:
+            key = self._key(key)
+        if key is not None and key not in data:
+            # The rule had a name, but not from this container
+            key = None
+        if key is None:
+            if len(data) == 0:
+                key = 0
+            else:
+                key = data.maxKey() + 1
+            rule.__name__ = str(key)
+        else:        
+            key = self._key(key)
+            
+        data[key] = rule
+        rule.__parent__ = self.context
         
     def getRules(self, eventInstance):
         return [r for r in self.values() 
@@ -74,25 +131,3 @@ class RuleManager(SampleContainer):
         actions = getAllUtilitiesRegisteredFor(IRuleAction)
         return [a for a in actions if 
                     a.for_ is None or a.for_.providedBy(self.context)]
-
-class RuleNameChooser(object):
-    """A name chooser for rules to go in a rule container.
-    """
-    implements(INameChooser)
-    adapts(IRuleManager)
-    
-    def __init__(self, context):
-        self.context = context
-
-    def checkName(self, name, object):
-        try:
-            int(name)
-        except ValueError:
-            raise UserError, "Only numbers are allowed"
-        
-    def chooseName(self, name, object):
-        annotations = IAnnotations(self.context.context)
-        rules = annotations.get(KEY, None)
-        if rules is None or len(rules) == 0:
-            return '0'
-        return str(int(rules.maxKey()) + 1)

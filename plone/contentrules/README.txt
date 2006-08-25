@@ -2,6 +2,24 @@
   Plone ContentRules Engine
 =============================
 
+plone.contentrules is a pure Zope 3 implementation of a content rules engine.
+Content rules are managed by the user, and may be likened to email filter
+rules or Apple's Automator. A user creates a Rule, and composes a sequence
+of rule elements, specifically Conditions and Actions. Rules are managed
+relative to a context via a Rule Manager.
+
+An event handler in the application layer (such as the complementary 
+plone.app.contentrules package) will query a Rule Manager for all applicable
+rules for this even, in this context, and execute them.
+
+The architecture is pluggable - it is easy to provide new rule elements, which
+can be registered via the <plone:ruleAction /> and <plone:ruleCondition />
+ZCML directives (or manually as utilities providing IRuleElement).
+
+Note that this package does not contain any UI for actual real-world rule
+elements. plone.app.contentrules provides Zope 2 acrobatics and Plone-specific
+elements and UI.
+
 Defining new rule elements
 --------------------------
 
@@ -285,39 +303,70 @@ needs to retrieve or modify rules for that context.
   
   >>> localRuleManager = IRuleManager(context)
   
-The rule manager acts as a container.
+The rule manager acts as a container. Note that __setitem__() is not 
+implemented. Instead, you should use saveRule(), which takes care of assigning
+a key (which is stored in __name__ on the rule).
   
-  >>> from zope.app.container.interfaces import IContainer
-  >>> IContainer.providedBy(localRuleManager)
+  >>> from zope.app.container.interfaces import IReadContainer
+  >>> IReadContainer.providedBy(localRuleManager)
   True
   >>> len(localRuleManager)
   0
   
-A name chooser exists to pick appropriate keys, since meaningful rules don't
-have naturally meaningful keys.
-
-  >>> from zope.app.container.interfaces import INameChooser
-  >>> chooser = INameChooser(localRuleManager)
-  >>> testRuleName = chooser.chooseName('', testRule)
-  
-  >>> localRuleManager[testRuleName] = testRule
+  >>> localRuleManager.saveRule(testRule)
   >>> testRule.__name__
-  u'0'
+  '0'
   >>> testRule.__parent__ is context
   True
+  
+  >>> tuple(localRuleManager.keys())
+  (0,)
+  
   >>> tuple(localRuleManager.values())
   (<plone.contentrules.rule.rule.Rule object at ...>,)
+  
+  >>> tuple(localRuleManager.items())
+  ((0, <plone.contentrules.rule.rule.Rule object at ...>),)
+  
+  >>> for v in localRuleManager:
+  ...   print repr(v)
+  0
+  
+  >>> localRuleManager.get(0)
+  <plone.contentrules.rule.rule.Rule object at ...>
+  >>> localRuleManager.get('0')
+  <plone.contentrules.rule.rule.Rule object at ...>
+  >>> localRuleManager.get(1, '_marker_')
+  '_marker_'
+  
   >>> localRuleManager['0'] == testRule
   True
+  >>> localRuleManager[0] == testRule
+  True
+  >>> localRuleManager.has_key(0)
+  True
+  >>> 0 in localRuleManager
+  True
+  >>> '0' in localRuleManager
+  True
   
-  >>> del localRuleManager['0']
+  >>> del localRuleManager[0]
   >>> len(localRuleManager)
   0
   
 Add some rules again so we can use them later.
 
-  >>> localRuleManager[chooser.chooseName('', testRule)] = testRule
-  >>> localRuleManager[chooser.chooseName('', testRule2)] = testRule2
+  >>> localRuleManager.saveRule(testRule)
+  >>> localRuleManager.saveRule(testRule2)
+
+Note that adding a rule twice updates the existing rule.
+
+  >>> testRule2.title = 'Another fairly simple test rule'
+  >>> localRuleManager.saveRule(testRule2)
+  >>> tuple(localRuleManager.keys())
+  (0, 1)
+  >>> localRuleManager[1].title
+  'Another fairly simple test rule'
 
   >>> for eachRule in sorted(localRuleManager.values()):
   ...     print eachRule
@@ -328,7 +377,7 @@ Add some rules again so we can use them later.
   |  2: (test.halt) <HaltExecutionAction object at ...>
   |  3: (test.halt) <HaltExecutionAction object at ...>
   |
-  ContentRule A fairly simple test rule:
+  ContentRule Another fairly simple test rule:
   | only containing a moveToFolderAction
   |  0: (test.moveToFolder) <MoveToFolderAction object at ...>
   |

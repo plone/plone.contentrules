@@ -5,7 +5,7 @@ __docformat__ = 'restructuredtext'
 from zope.interface import Interface
 from zope import schema
 
-from zope.app.container.interfaces import IContainer
+from zope.app.container.interfaces import IReadContainer
 from zope.annotation.interfaces import IAttributeAnnotatable
 from zope.app.container.interfaces import IAdding
 
@@ -25,11 +25,29 @@ class IRuleElementAdding(IAdding):
     Rules' addviews should be registered for this.
     """
 
-class IRuleManager(IContainer):
-    """An object that is capable of managing rules
+class IRuleManager(IReadContainer):
+    """An object that is capable of managing rules. 
     
-    Typically, a content object will be adapted to this interface
+    This is also a read container so that rules can be found using a container
+    API. The keys are rule.__name__, which get set using saveRule().
+    
+    Typically, a content object will be adapted to this interface, and the
+    actual rule assignments stored in annotations.
     """
+    
+    def saveRule(rule):
+        """Add the given rule.
+        
+        This will also set the __name__ and __parent__ attributes of the rule
+        to appropriate attributes.
+        """
+    
+    def __delitem__(self, key):
+        """Remove the given rule.
+        
+        note: we are not using a write container because we don't want to be
+        use __setitem__, but rather use saveRule()
+        """
     
     def getRules(event):
         """Get all rules registered for the given event.
