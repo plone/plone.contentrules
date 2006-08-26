@@ -28,10 +28,46 @@ class Rule(Persistent):
     __parent__ = None
     
     def __init__(self, elements=None):
-        if elements is None:
-            self.elements = PersistentList()
-        else:
-            self.elements = elements
+        self.elements = PersistentList()
+
+    def keys(self):
+        return range(len(self.elements))
+
+    def __iter__(self):
+        return iter(self.values())
+
+    def __getitem__(self, key):
+        return self.elements[self._key(key)].instance
+
+    def get(self, key, default=None):
+        try:
+            key = self._key(key)
+            return self.elements[key].instance
+        except (IndexError, KeyError,):
+            return default        
+
+    def values(self):
+        return [x.instance for x in self.elements]
+
+    def __len__(self):
+        return len(self.elements)
+
+    def items(self):
+        i = []
+        idx = 0
+        for n in self.elements:
+            i.append((idx, n.instance),)
+            idx += 1
+        return i
+
+    def __contains__(self, key):
+        try:
+            key = self._key(key)
+        except KeyError:
+            return False
+        return key >= 0 and key < len(self.elements)
+
+    has_key = __contains__
         
     def __str__(self):
         theString = u"ContentRule %(title)s:\n| %(description)s\n|" \
@@ -43,6 +79,15 @@ class Rule(Persistent):
             count+=1
             
         return theString
+    
+    def _key(self, key):
+        """Make the key into an int. If conversion fails, raise KeyError,
+        not ValueError (since it means we were passed a bogus key).
+        """
+        try:
+            return int(key)
+        except ValueError:
+            raise KeyError, key
 
 class RuleExecutable(object):
     """An adapter capable of executing a rule

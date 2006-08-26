@@ -5,10 +5,10 @@ __docformat__ = 'restructuredtext'
 from zope.interface import Interface
 
 from zope.location.interfaces import ILocation
+from zope.app.container.interfaces import IReadContainer
+
 from zope import schema
 from zope.configuration import fields as configuration_fields
-
-
 
 class IRuleElement(Interface):
     """Base interface for rule elements (actions and conditions)
@@ -76,7 +76,7 @@ class IRuleElementNode(Interface):
                              required = True,
                              readonly = True)
 
-class IRule(ILocation):
+class IRule(ILocation, IReadContainer):
     """A rule - a collection of rule elements.
     
     A rule is composed, normally through the user interface, of conditions and
@@ -85,6 +85,9 @@ class IRule(ILocation):
     method.
     
     When saved in a rule manager, it will be given a name.
+    
+    The IReadContainer aspect of the rule means that its elements can be
+    addressed. The keys will be the integer ids.
     """
     
     title = schema.TextLine(title = u'Title',
