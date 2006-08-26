@@ -1,8 +1,6 @@
 <configure xmlns="http://namespaces.zope.org/zope">
     
-    <!-- XXX: For some reason the annotations adapter isn't loaded by default
-      in current Zope 2.10 svn
-    -->
+
     <include package="zope.annotation" />
     
     <include package=".engine" />

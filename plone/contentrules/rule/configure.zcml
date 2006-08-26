@@ -1,5 +1,12 @@
 <configure xmlns="http://namespaces.zope.org/zope">
     
-    <adapter factory=".rule.RuleExecutable" />
+    <adapter
+      factory=".rule.RuleExecutable" 
+      />
+    
+    <utility 
+      component=".eventvocab.EventTypesVocabulary" 
+      name="Rule event types" 
+      />
             
 </configure>

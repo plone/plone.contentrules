@@ -3,6 +3,7 @@
 __docformat__ = 'restructuredtext'
 
 from zope.interface import Interface
+from zope.interface.interfaces import IInterface
 
 from zope.location.interfaces import ILocation
 from zope.app.container.interfaces import IReadContainer
@@ -75,6 +76,12 @@ class IRuleElementNode(Interface):
                              schema = Interface, # We don't know what type of schema it is
                              required = True,
                              readonly = True)
+                             
+class IRuleEventType(IInterface):
+    """Marker interface for event interfaces that can be used as the 'event'
+    type of an IRule.
+    """
+    
 
 class IRule(ILocation, IReadContainer):
     """A rule - a collection of rule elements.
@@ -98,9 +105,10 @@ class IRule(ILocation, IReadContainer):
                               description = u'A summary of the rule',
                               required = False)
 
-    event = configuration_fields.GlobalInterface(title = u'Triggering event',
-                                                 description = u'The event that can trigger this rule',
-                                                 required = True)
+    event = schema.Choice(title = u'Triggering event',
+                          description = u'The event that can trigger this rule',
+                          required = True,
+                          vocabulary="Rule event types")
     
     elements = schema.List(title = u'Rule elements',
                            description = u'The elements that the rule consists of',
