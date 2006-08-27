@@ -18,7 +18,7 @@ def ruleConditionDirective(_context, name, title, \
     condition.for_ = for_
     condition.event = event
     
-    utility(_context, provides=IRuleCondition, component=condtion, name=name)
+    utility(_context, provides=IRuleCondition, component=condition, name=name)
     
     
 def ruleActionDirective(_context, name, title, \

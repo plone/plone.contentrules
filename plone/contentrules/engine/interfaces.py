@@ -53,8 +53,10 @@ class IRuleManager(IReadContainer):
         """Get all rules registered for the given event.
         """
     
-    def getAvailableConditions(eventInstance):
-        """Get a list of all IRuleConditions applicable to the given event.
+    def getAvailableConditions(eventType):
+        """Get a list of all IRuleConditions applicable to the given event
+        (which should be an interface).
+        
         Also includes non-event-specific elements!
         """
         
@@ -63,8 +65,10 @@ class IRuleManager(IReadContainer):
         keys. One key will be None, for the non-event-specific elements.
         """
         
-    def getAvailableActions(eventInstance):
-        """Get a list of all IRuleActions applicable to the given event.
+    def getAvailableActions(eventType):
+        """Get a list of all IRuleActions applicable to the given event
+        (which should be an interface).
+        
         Also includes non-event-specific elements!
         """
         

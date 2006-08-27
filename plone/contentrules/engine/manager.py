@@ -109,10 +109,10 @@ class RuleManager(object):
         return [r for r in self.values() 
                     if r.event is None or r.event.providedBy(eventInstance)]
         
-    def getAvailableConditions(self, eventInstance):
+    def getAvailableConditions(self, eventType):
         conditions = getAllUtilitiesRegisteredFor(IRuleCondition)
         return [c for c in conditions if 
-                    (c.event is None or c.event.providedBy(eventInstance)) and
+                    (c.event is None or a.event.isOrExtends(eventType)) and
                     (c.for_ is None or c.for_.providedBy(self.context))]
         
     def allAvailableConditions(self):
@@ -120,11 +120,10 @@ class RuleManager(object):
         return [c for c in conditions if 
                     c.for_ is None or c.for_.providedBy(self.context)]
         
-    def getAvailableActions(self, eventInstance):
-        eventInterface = [a for a in providedBy(eventInstance).flattened()][0]
+    def getAvailableActions(self, eventType):
         actions = getAllUtilitiesRegisteredFor(IRuleAction)
         return [a for a in actions if 
-                    (a.event is None or a.event.isOrExtends(eventInterface)) and
+                    (a.event is None or a.event.isOrExtends(eventType)) and
                     (a.for_ is None or a.for_.providedBy(self.context))]
         
     def allAvailableActions(self):

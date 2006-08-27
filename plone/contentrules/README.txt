@@ -599,18 +599,14 @@ All elements so far:
 
 Filtering for specific events:
 
-  >>> from zope.component.interfaces import ObjectEvent
-  >>> from zope.lifecycleevent import ObjectCreatedEvent, ObjectCopiedEvent
+  >>> from zope.lifecycleevent.interfaces import IObjectCreatedEvent, IObjectCopiedEvent
   >>> newContext = MyContent()
   
-  >>> firedEvent = ObjectEvent(context)
-  >>> sorted([a.title for a in localRuleManager.getAvailableActions(firedEvent)])
+  >>> sorted([a.title for a in localRuleManager.getAvailableActions(IObjectEvent)])
   ['Halt Rule Execution', 'Log Event', 'Move To Folder', 'Object Copied Specific Action', 'Object Created specific action']
   
-  >>> firedEvent = ObjectCreatedEvent(newContext)
-  >>> sorted([a.title for a in localRuleManager.getAvailableActions(firedEvent)])
+  >>> sorted([a.title for a in localRuleManager.getAvailableActions(IObjectCreatedEvent)])
   ['Halt Rule Execution', 'Log Event', 'Object Copied Specific Action', 'Object Created specific action']
   
-  >>> firedEvent = ObjectCopiedEvent(context, newContext)
-  >>> sorted([a.title for a in localRuleManager.getAvailableActions(firedEvent)])
+  >>> sorted([a.title for a in localRuleManager.getAvailableActions(IObjectCopiedEvent)])
   ['Halt Rule Execution', 'Log Event', 'Object Copied Specific Action']
