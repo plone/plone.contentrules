@@ -112,7 +112,7 @@ class RuleManager(object):
     def getAvailableConditions(self, eventType):
         conditions = getAllUtilitiesRegisteredFor(IRuleCondition)
         return [c for c in conditions if 
-                    (c.event is None or a.event.isOrExtends(eventType)) and
+                    (c.event is None or c.event.isOrExtends(eventType)) and
                     (c.for_ is None or c.for_.providedBy(self.context))]
         
     def allAvailableConditions(self):
