@@ -11,6 +11,19 @@ from zope.app.container.interfaces import IReadContainer
 from zope import schema
 from zope.configuration import fields as configuration_fields
 
+class IRuleElementData(Interface):
+    """Marker interface for rule element data (the configuration of actions
+    or conditions).
+    """
+    
+class IRuleConditionData(IRuleElementData):
+    """Marker interface for rule condition data.
+    """
+    
+class IRuleActionData(IRuleElementData):
+    """Marker interface for rule action data.
+    """
+    
 class IRuleElement(Interface):
     """Base interface for rule elements (actions and conditions)
     
@@ -81,7 +94,6 @@ class IRuleEventType(IInterface):
     """Marker interface for event interfaces that can be used as the 'event'
     type of an IRule.
     """
-    
 
 class IRule(ILocation, IReadContainer):
     """A rule - a collection of rule elements.

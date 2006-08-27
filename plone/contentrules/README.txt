@@ -37,15 +37,18 @@ First, we create some rule elements.
   >>> from zope.component import provideAdapter
 
   >>> from plone.contentrules.rule.interfaces import IRuleCondition, IRuleAction
+  >>> from plone.contentrules.rule.interfaces import IRuleConditionData
+  >>> from plone.contentrules.rule.interfaces import IRuleActionData
   >>> from plone.contentrules.rule.element import RuleCondition, RuleAction 
   
   >>> from persistent import Persistent
   
 We create an interface describing the schema of the configuration of the custom 
 rule element. This allows us to use zope.formlib to create add and edit forms,
-for example.
+for example. We use the IRuleActionData marker as a base class so that the UI
+will be able to identify this as an action element.
 
-  >>> class IMoveToFolderAction(Interface):
+  >>> class IMoveToFolderAction(IRuleActionData):
   ...     targetFolder = schema.TextLine(title=u"Target Folder")
   
 Create the actual class for holding the configuration data:
@@ -106,7 +109,7 @@ First, let us make some sort of temporary logger:
 
 Again, we have to define an interface for the logger action:
 
-  >>> class ILoggerAction(Interface):
+  >>> class ILoggerAction(IRuleActionData):
   ...     targetLogger = schema.TextLine(title=u"target logger",default=u"temporary_logger")
   ...     loggingLevel = schema.Int(title=u"logging level", default=1000)
   ...     loggerMessage = schema.TextLine(title=u"message",
@@ -163,10 +166,10 @@ As a condition, consider one which only executes rules if the context provides
 a given interface.
 
   >>> from zope.interface import Attribute
-  >>> class IInterfaceCondition(Interface):
+  >>> class IInterfaceCondition(IRuleConditionData):
   ...     iface = Attribute(u'the interface')
 
-  >>> class InterfaceCondition(Persistent):
+  >>> class InterfaceCondition(object):
   ...     implements (IInterfaceCondition)
   ...     iface = None
 

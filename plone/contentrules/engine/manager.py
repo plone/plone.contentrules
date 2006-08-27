@@ -88,12 +88,12 @@ class RuleManager(object):
     def saveRule(self, rule):
         data = self._getContainerData(True)
         key = getattr(rule, '__name__', None)
-        if key is not None:
+        if key:
             key = self._key(key)
-        if key is not None and key not in data:
+        if key and key not in data:
             # The rule had a name, but not from this container
             key = None
-        if key is None:
+        if not key:
             if len(data) == 0:
                 key = 0
             else:
