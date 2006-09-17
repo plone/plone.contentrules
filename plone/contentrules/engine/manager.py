@@ -1,113 +1,60 @@
-from zope.interface import implements, providedBy
-from zope.component import adapts, getAllUtilitiesRegisteredFor
+from zope.interface import implements, implementer, providedBy
+from zope.component import adapts, adapter, getAllUtilitiesRegisteredFor
 from zope.exceptions import UserError
 
 from zope.annotation.interfaces import IAnnotations
 
-from zope.app.container.contained import Contained, setitem
+from zope.app.container.ordered import OrderedContainer
 
 from plone.contentrules.engine.interfaces import IRuleManager
+from plone.contentrules.engine.interfaces import IRuleStorage
 from plone.contentrules.engine.interfaces import IRuleContainer
 
 from plone.contentrules.rule.interfaces import IRuleCondition
 from plone.contentrules.rule.interfaces import IRuleAction
 
-from BTrees.IOBTree import IOBTree
+from BTrees.OOBTree import OOBTree
 
 KEY = 'plone.contentrules.localrules'
 
-class RuleManager(object):
-    """Allow any annotatable object to store context-specific rules.
+@adapter(IRuleContainer)
+@implementer(IRuleStorage)
+def localRuleStorageAdapter(context):
+    """When adapting an IRuleContainer, get an IRuleManager by finding one in
+    the object's annotations. The container will be created if necessary.
+    """
+    annotations = IAnnotations(context)
+    manager = annotations.get(KEY, None)
+    if manager is None:
+        manager = annotations[KEY] = RuleStorage()
+    return manager
+
+class RuleStorage(OrderedContainer):
+    """A container for rules.
     """
     
-    implements(IRuleManager)
-    adapts(IRuleContainer)
+    implements(IRuleStorage)
 
-    def __init__(self, context):
-        self.context = context
-        self.annotations = IAnnotations(self.context)
-        
-    def _getContainerData(self, create=False):
-        """Get rules from an annotations key, stored in an OOBTree.
-        
-        If create is True, create the annotation key if it's missing.
-        Otherwise, {} is returned.
-        """
-        rules = self.annotations.get(KEY, None)
-        if rules is None and create:
-            self.annotations[KEY] = IOBTree()
-            rules = self.annotations[KEY]
-        if rules is None:
-            return {}
-        return rules
-        
-    def _key(self, key):
-        """Make the key into an int. If conversion fails, raise KeyError,
-        not ValueError (since it means we were passed a bogus key).
-        """
-        try:
-            return int(key)
-        except ValueError:
-            raise KeyError, key
-
-    def keys(self):
-        return self._getContainerData().keys()
-
-    def __iter__(self):
-        return iter(self._getContainerData())
-
-    def __getitem__(self, key):
-        return self._getContainerData()[self._key(key)]
-
-    def get(self, key, default=None):
-        return self._getContainerData().get(self._key(key), default)
-
-    def values(self):
-        return self._getContainerData().values()
-
-    def __len__(self):
-        return len(self._getContainerData())
-
-    def items(self):
-        return self._getContainerData().items()
-
-    def __contains__(self, key):
-        return bool(self._getContainerData().has_key(self._key(key)))
-
-    has_key = __contains__
-    
-    def __delitem__(self, key):
-        key = self._key(key)
-        data = self._getContainerData()
-        rule = data[key]
-        del data[key]
-        
-        rule.__parent__ = None
-        rule.__name__ = None
-        
-    def saveRule(self, rule):
-        data = self._getContainerData(True)
-        key = getattr(rule, '__name__', None)
-        if key:
-            key = self._key(key)
-        if key and key not in data:
-            # The rule had a name, but not from this container
-            key = None
-        if not key:
-            if len(data) == 0:
-                key = 0
-            else:
-                key = data.maxKey() + 1
-            rule.__name__ = str(key)
-        else:        
-            key = self._key(key)
-            
-        data[key] = rule
-        rule.__parent__ = self.context
+    def __init__(self):
+        # XXX: This depends on implementation detail in OrderedContainer,
+        # but it uses a PersistentDict, which sucks :-/
+        OrderedContainer.__init__(self)
+        self._data = OOBTree()
         
     def getRules(self, eventInstance):
         return [r for r in self.values() 
                     if r.event is None or r.event.providedBy(eventInstance)]
+        
+class RuleManager(object):
+    """Let object capable of being assigned rules discover which rule elements
+    are available.
+    """
+    
+    implements(IRuleManager)
+    adapts(IRuleContainer)
+        
+    def __init__(self, context):
+        self.context = context
         
     def getAvailableConditions(self, eventType):
         conditions = getAllUtilitiesRegisteredFor(IRuleCondition)

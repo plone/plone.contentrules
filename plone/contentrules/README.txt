@@ -54,7 +54,7 @@ will be able to identify this as an action element.
 Create the actual class for holding the configuration data:
   
   >>> class MoveToFolderAction(Persistent):
-  ...     implements (IMoveToFolderAction)
+  ...     implements(IMoveToFolderAction)
   ...     targetFolder = ''
 
 In order to be able to execute the rule elements that form a rule, they must be
@@ -333,144 +333,53 @@ A third rule will be used to demonstrate a condition:
   >>> testRule3.elements.append(Node('test.interface', interfaceConditionInstance))
   >>> testRule3.elements.append(Node('test.moveToFolder', moveToFolderAction))
 
-Accessing rule elements
------------------------
-
-Rules act as an IReadContainer, where the keys are the integer indexes of 
-the elements list. This allows traversal to rule elements by their index.
-
-  >>> from zope.app.container.interfaces import IReadContainer
-  >>> IReadContainer.providedBy(testRule)
-  True
-  
-  >>> len(testRule)
-  4
-  
-  >>> testRule.keys()
-  [0, 1, 2, 3]
-  
-  >>> testRule.values()
-  [<MoveToFolderAction object at ...>, ...]
-  
-  >>> testRule.items()
-  [(0, <MoveToFolderAction object at ...>), ...]
-  
-  >>> for i in testRule:
-  ...   print i
-  <MoveToFolderAction object at ...>
-  <MoveToFolderAction object at ...>
-  <HaltExecutionAction object at ...>
-  <HaltExecutionAction object at ...>
-
-  >>> testRule.get(3)
-  <HaltExecutionAction object at ...>
-  
-  >>> testRule.get('foo', None) is None
-  True
-  
-  >>> testRule[1] == testRule['0']
-  True
-  
-  >>> 'foo' in testRule
-  False
-  
-  >>> testRule.has_key(20)
-  False
-
 Managing rules relative to objects
 ----------------------------------
 
-The rule manager ties to a localised object, say a folder, and acts like
-localised storage for rules. It locates rules based on unique integer ids.
+Rules are stored in an IRuleStorage. Any IRuleContainer-marked object can be
+adapted to IRuleStorage - its rules will be stored in an annotation. 
+
+The rule storage is an ordered container. It is also marked with 
+IContainerNamesContainer because by default, an INameChooser should be
+used to pick a name for rules. This is simply because rules normally don't
+have sensible names.
+  
+  >>> from plone.contentrules.engine.interfaces import IRuleStorage
+  >>> ruleStorage = IRuleStorage(context)
+  
+  >>> from zope.app.container.interfaces import IOrderedContainer
+  >>> from zope.app.container.interfaces import IContainerNamesContainer
+  
+  >>> IOrderedContainer.providedBy(ruleStorage)
+  True
+  >>> IContainerNamesContainer.providedBy(ruleStorage)
+  True
+  
+  >>> len(ruleStorage)
+  0
+  
 Before a rule is saved, it has no name, and no parent.
 
-  >>> from zope.location import ILocation
-  >>> ILocation.providedBy(testRule)
+  >>> from zope.app.container.interfaces import IContained
+  >>> IContained.providedBy(testRule)
   True
   >>> testRule.__name__ is None
   True
   >>> testRule.__parent__ is None
   True
   
-The rule manager acts as a container. Note that __setitem__() is not 
-implemented. Instead, you should use saveRule(), which takes care of assigning
-a key (which is stored in __name__ on the rule).
+After being saved, it will be given a name and parentage.
   
-  >>> from zope.app.container.interfaces import IReadContainer
-  >>> IReadContainer.providedBy(localRuleManager)
-  True
-  >>> len(localRuleManager)
-  0
-  
-  >>> localRuleManager.saveRule(testRule)
+  >>> ruleStorage[u'testRule'] = testRule
   >>> testRule.__name__
-  '0'
-  >>> testRule.__parent__ is context
+  u'testRule'
+  >>> testRule.__parent__ is ruleStorage
   True
   
-  >>> tuple(localRuleManager.keys())
-  (0,)
-  
-  >>> tuple(localRuleManager.values())
-  (<plone.contentrules.rule.rule.Rule object at ...>,)
-  
-  >>> tuple(localRuleManager.items())
-  ((0, <plone.contentrules.rule.rule.Rule object at ...>),)
-  
-  >>> for v in localRuleManager:
-  ...   print repr(v)
-  0
-  
-  >>> localRuleManager.get(0)
-  <plone.contentrules.rule.rule.Rule object at ...>
-  >>> localRuleManager.get('0')
-  <plone.contentrules.rule.rule.Rule object at ...>
-  >>> localRuleManager.get(1, '_marker_')
-  '_marker_'
-  
-  >>> localRuleManager['0'] == testRule
-  True
-  >>> localRuleManager[0] == testRule
-  True
-  >>> localRuleManager.has_key(0)
-  True
-  >>> 0 in localRuleManager
-  True
-  >>> '0' in localRuleManager
-  True
-  
-  >>> del localRuleManager[0]
-  >>> len(localRuleManager)
-  0
-  
-Add our rules again so we can use them later.
+We add the other rules too, so that they can be used later.
 
-  >>> localRuleManager.saveRule(testRule)
-  >>> localRuleManager.saveRule(testRule2)
-  >>> localRuleManager.saveRule(testRule3)
-
-Note that adding a rule twice updates the existing rule.
-
-  >>> testRule2.title = 'Another fairly simple test rule'
-  >>> localRuleManager.saveRule(testRule2)
-  >>> tuple(localRuleManager.keys())
-  (0, 1, 2)
-  >>> localRuleManager[1].title
-  'Another fairly simple test rule'
-
-  >>> for eachRule in sorted(localRuleManager.values()):
-  ...     print eachRule
-  ContentRule Fairly simple test rule:
-  | some test actions
-  |  0: (test.moveToFolder) <MoveToFolderAction object at ...>
-  |  1: (test.moveToFolder) <MoveToFolderAction object at ...>
-  |  2: (test.halt) <HaltExecutionAction object at ...>
-  |  3: (test.halt) <HaltExecutionAction object at ...>
-  |
-  ContentRule Another fairly simple test rule:
-  | only containing a moveToFolderAction
-  |  0: (test.moveToFolder) <MoveToFolderAction object at ...>
-  |
+  >>> ruleStorage[u'testRule2'] = testRule2
+  >>> ruleStorage[u'testRule3'] = testRule3
 
 Executing rules
 ---------------
@@ -485,7 +394,6 @@ The executor method will be passed an event, so that rules may determine what
 triggered them. Because this is a test, we registered the rule for the "event"
 described by "Interface". In fact, this would equate to a rule triggered by
 any and all events.
-
 
   >>> from zope.component.interfaces import ObjectEvent
   >>> someEvent = ObjectEvent(context)
@@ -508,11 +416,11 @@ there.
   ...     implements(IRuleContainer)
   >>> otherContext = OtherContent()
   
-  >>> otherRuleManager = IRuleManager(otherContext)
+  >>> otherRuleStorage = IRuleStorage(otherContext)
   >>> from copy import copy
-  >>> otherRuleManager.saveRule(copy(testRule))
-  >>> otherRuleManager.saveRule(copy(testRule2))
-  >>> otherRuleManager.saveRule(copy(testRule3))
+  >>> otherRuleStorage[u'testRuleCopy'] = copy(testRule)
+  >>> otherRuleStorage[u'testRule2Copy'] = copy(testRule2)
+  >>> otherRuleStorage[u'testRule3Copy'] = copy(testRule3)
   
   >>> otherRuleExecutor = IRuleExecutor(otherContext)
   >>> otherRuleExecutor.executeAll(someEvent)

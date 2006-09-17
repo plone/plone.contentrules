@@ -1,7 +1,7 @@
 <configure xmlns="http://namespaces.zope.org/zope">
     
-    <adapter factory=".manager.RuleManager" 
-             provides=".interfaces.IRuleManager" />
+    <adapter factory=".manager.localRuleStorageAdapter" />
+    <adapter factory=".manager.RuleManager" />
     <adapter factory=".executor.RuleExecutor" />
     
 </configure>

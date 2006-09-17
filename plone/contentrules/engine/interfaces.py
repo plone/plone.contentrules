@@ -5,53 +5,32 @@ __docformat__ = 'restructuredtext'
 from zope.interface import Interface
 from zope import schema
 
-from zope.app.container.interfaces import IReadContainer
+from zope.app.container.interfaces import IOrderedContainer
+from zope.app.container.interfaces import IContainerNamesContainer
+
+from zope.app.container.constraints import contains
 from zope.annotation.interfaces import IAttributeAnnotatable
-from zope.app.container.interfaces import IAdding
 
 class IRuleContainer(IAttributeAnnotatable):
     """Marker interface for objects that can store rules.
     """
-    
-class IRuleAdding(IAdding):
-    """Marker interface for rule add views.
-    
-    Rules' addviews should be registered for this.
-    """
-    
-class IRuleElementAdding(IAdding):
-    """Marker interface for rule element (actions/conditions) add views.
-    
-    Rules' addviews should be registered for this.
-    """
 
-class IRuleManager(IReadContainer):
-    """An object that is capable of managing rules. 
-    
-    This is also a read container so that rules can be found using a container
-    API. The keys are rule.__name__, which get set using saveRule().
-    
-    Typically, a content object will be adapted to this interface, and the
-    actual rule assignments stored in annotations.
+class IRuleStorage(IOrderedContainer, IContainerNamesContainer):
+    """A storage for rules.
     """
-    
-    def saveRule(rule):
-        """Add the given rule.
-        
-        This will also set the __name__ and __parent__ attributes of the rule
-        to appropriate attributes.
-        """
-    
-    def __delitem__(self, key):
-        """Remove the given rule.
-        
-        note: we are not using a write container because we don't want to be
-        use __setitem__, but rather use saveRule()
-        """
+    contains('plone.contentrules.rule.interfaces.IRule')
     
     def getRules(event):
         """Get all rules registered for the given event.
         """
+    
+class IRuleManager(Interface):
+    """An object that is capable of managing rules. 
+    
+    Normally, the same object will be adapted to IRuleStorage and IRuleManager,
+    the first to retrieve and store rules, the second to discover available
+    conditions and actions.
+    """
     
     def getAvailableConditions(eventType):
         """Get a list of all IRuleConditions applicable to the given event

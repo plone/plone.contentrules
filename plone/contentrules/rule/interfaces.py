@@ -5,8 +5,8 @@ __docformat__ = 'restructuredtext'
 from zope.interface import Interface
 from zope.interface.interfaces import IInterface
 
-from zope.location.interfaces import ILocation
 from zope.app.container.interfaces import IReadContainer
+from zope.app.container.interfaces import IContained
 
 from zope import schema
 from zope.configuration import fields as configuration_fields
@@ -84,8 +84,8 @@ class IRuleElementNode(Interface):
                            readonly = True,)
                            
     instance = schema.Object(title = u'Instance',
-                             description = u"An instance that is created by the rule element's factory "
-                                            "(i.e. the configuration for this specific element",
+                             description = u"An instance that is created by the rule's add form"
+                                            "(i.e. the configuration for this specific element)",
                              schema = Interface, # We don't know what type of schema it is
                              required = True,
                              readonly = True)
@@ -95,7 +95,7 @@ class IRuleEventType(IInterface):
     type of an IRule.
     """
 
-class IRule(ILocation, IReadContainer):
+class IRule(IContained):
     """A rule - a collection of rule elements.
     
     A rule is composed, normally through the user interface, of conditions and
@@ -103,10 +103,7 @@ class IRule(ILocation, IReadContainer):
     be executed by adapting them to IExecutable and running its execute()
     method.
     
-    When saved in a rule manager, it will be given a name.
-    
-    The IReadContainer aspect of the rule means that its elements can be
-    addressed. The keys will be the integer ids.
+    When saved in a rule storage, it will be given a name.
     """
     
     title = schema.TextLine(title = u'Title',
@@ -132,20 +129,19 @@ class IExecutable(Interface):
     The execution of a rule involves the execution of each one of its elements
     (i.e. conditions and actions). The IRule will be adapted to IExecutable in
     order to execute it (e.g. by iterating through the elements and executing
-    each one).
+    each one), in a multi-adaptation of (context, rule, event), making it
+    possible to customise the execution based on the type of event or context.
     
-    Similarly, any object created from the 'factory' attribute of an
-    IRuleElement (i.e. the configuration object for that particular instance of
-    that particular condition or action) will be adapted to IExecutable in order
-    to be executed when the rule that contains it is executed.
+    Similarly, any object created via the 'addview' of an IRuleElement (i.e. 
+    the configuration object for that particular instance of that particular 
+    condition or action) will be adapted to IExecutable, in a multi-adaptation 
+    from (context, element, event),  in order to be executed when the rule that 
+    contains it is executed.
     """
     
-    def __call__(context, event):
-        """Execute the element.
-        
-        Context is the object the rule element is acting upon. 
-        Event is the triggering event. This could be None.
-        
+    def __call__():
+        """Execute the rule or rule element.
+                
         If this method returns False, execution will stop. If it returns True,
         execution will continue if possible.
         """
