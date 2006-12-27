@@ -44,7 +44,7 @@ class IRuleElementDirective(Interface):
     editview = schema.TextLine(
         title = _(u"Edit view"),
         description = _(u"Name of the edit view"),
-        required = True)
+        required = False)
         
 class IRuleActionDirective(IRuleElementDirective):
     """An element directive describing what is logically an action element.

@@ -59,7 +59,7 @@ class RuleManager(object):
     def getAvailableConditions(self, eventType):
         conditions = getAllUtilitiesRegisteredFor(IRuleCondition)
         return [c for c in conditions if 
-                    (c.event is None or c.event.isOrExtends(eventType)) and
+                    (c.event is None or eventType.isOrExtends(c.event)) and
                     (c.for_ is None or c.for_.providedBy(self.context))]
         
     def allAvailableConditions(self):
@@ -70,7 +70,7 @@ class RuleManager(object):
     def getAvailableActions(self, eventType):
         actions = getAllUtilitiesRegisteredFor(IRuleAction)
         return [a for a in actions if 
-                    (a.event is None or a.event.isOrExtends(eventType)) and
+                    (a.event is None or eventType.isOrExtends(a.event)) and
                     (a.for_ is None or a.for_.providedBy(self.context))]
         
     def allAvailableActions(self):
