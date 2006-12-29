@@ -516,10 +516,10 @@ Filtering for specific events:
   >>> newContext = MyContent()
   
   >>> sorted([a.title for a in localRuleManager.getAvailableActions(IObjectEvent)])
-  ['Halt Rule Execution', 'Log Event', 'Move To Folder', 'Object Copied Specific Action', 'Object Created specific action']
+  ['Halt Rule Execution', 'Log Event', 'Move To Folder']
   
   >>> sorted([a.title for a in localRuleManager.getAvailableActions(IObjectCreatedEvent)])
-  ['Halt Rule Execution', 'Log Event', 'Object Copied Specific Action', 'Object Created specific action']
+  ['Halt Rule Execution', 'Log Event', 'Move To Folder', 'Object Created specific action']
   
   >>> sorted([a.title for a in localRuleManager.getAvailableActions(IObjectCopiedEvent)])
-  ['Halt Rule Execution', 'Log Event', 'Object Copied Specific Action']
+  ['Halt Rule Execution', 'Log Event', 'Move To Folder', 'Object Copied Specific Action', 'Object Created specific action']
