@@ -10,7 +10,7 @@ relative to a context via a Rule Manager.
 
 An event handler in the application layer (such as the complementary 
 plone.app.contentrules package) will query a Rule Manager for all applicable
-rules for this even, in this context, and execute them.
+rules for this event, in this context, and execute them.
 
 The architecture is pluggable - it is easy to provide new rule elements, which
 can be registered via the <plone:ruleAction /> and <plone:ruleCondition />
@@ -27,6 +27,8 @@ Rules are composed of rule elements - actions and conditions. These will be
 executed one by one when a rule is invoked.
 
 First, we create some rule elements.
+
+Lets start with some basic imports:
 
   >>> from zope.interface import Interface, implements
   >>> from zope.component import adapts
