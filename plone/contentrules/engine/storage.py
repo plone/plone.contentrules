@@ -1,0 +1,22 @@
+from zope.interface import implements
+from zope.app.container.ordered import OrderedContainer
+
+from plone.contentrules.engine.interfaces import IRuleStorage
+
+from BTrees.OOBTree import OOBTree
+
+class RuleStorage(OrderedContainer):
+    """A container for rules.
+    """
+    
+    implements(IRuleStorage)
+
+    def __init__(self):
+        # XXX: This depends on implementation detail in OrderedContainer,
+        # but it uses a PersistentDict, which sucks :-/
+        OrderedContainer.__init__(self)
+        self._data = OOBTree()
+        
+    def getRules(self, eventInstance):
+        return [r for r in self.values() 
+                    if r.event is None or r.event.providedBy(eventInstance)]

@@ -1,7 +1,6 @@
 <configure xmlns="http://namespaces.zope.org/zope">
     
-    <adapter factory=".manager.localRuleStorageAdapter" />
-    <adapter factory=".manager.RuleManager" />
+    <adapter factory=".assignments.ruleAssignmentManagerAdapterFactory" />
     <adapter factory=".executor.RuleExecutor" />
     
 </configure>
