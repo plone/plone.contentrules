@@ -30,17 +30,6 @@ class Rule(Persistent):
     def __init__(self, elements=None):
         self.elements = PersistentList()
 
-    def __str__(self):
-        theString = u"ContentRule %(title)s:\n| %(description)s\n|" \
-            %{'title':self.title, 'description':self.description}
-        
-        count = 0
-        for element in self.elements:
-            theString += "%3i: (%s) %s\n|" % (count, element.name, str(element.instance))
-            count += 1
-            
-        return theString
-
 class RuleExecutable(object):
     """An adapter capable of executing a rule
     """

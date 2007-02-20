@@ -17,8 +17,8 @@ class RuleExecutor(object):
     def __init__(self, context):
         self.context = context
     
-    def __call__(self, event):
+    def __call__(self, event, bubbled=False):
         assignments = IRuleAssignmentManager(self.context)
-        for rule in assignments.getRules(event):
+        for rule in assignments.getRules(event, bubbled=bubbled):
                 executable = getMultiAdapter((self.context, rule, event), IExecutable)
-                return executable()
+                executable()

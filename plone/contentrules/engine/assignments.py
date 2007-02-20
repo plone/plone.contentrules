@@ -38,14 +38,11 @@ class RuleAssignmentManager(OrderedContainer):
         OrderedContainer.__init__(self)
         self._data = OOBTree()
 
-    def getRules(self, event):
-        """Get all enabled rules registered for the given event and
-        assigned to this context.
-        """
+    def getRules(self, event, bubbled=False):
         rules = []
         storage = getUtility(IRuleStorage)
         for a in self.values():
-            if a.enabled:
+            if a.enabled and (bubbled == False or a.bubbles):
                 r = storage.get(a.__name__, None)
                 if r is not None and r.event.providedBy(event):
                     rules.append(r)
