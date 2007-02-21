@@ -117,11 +117,16 @@ class IRule(IContained):
     event = schema.Choice(title = u'Triggering event',
                           description = u'The event that can trigger this rule',
                           required = True,
-                          vocabulary="Rule event types")
+                          vocabulary="plone.contentrules.events")
     
     elements = schema.List(title = u'Rule elements',
                            description = u'The elements that the rule consists of',
                            required = True)
+                           
+    enabled = schema.Bool(title = u'Enabled',
+                          description = u'Whether or not the rule is currently enabled',
+                          required = True,
+                          default = True)
 
 class IExecutable(Interface):
     """An item which can be executed.

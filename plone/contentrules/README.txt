@@ -259,7 +259,7 @@ itself implies IAttributeAnnotatable.
 
   >>> from plone.contentrules.engine import utils
   
-  >>> availableActions = utils.allAvailableActions(context)
+  >>> availableActions = utils.allAvailableActions(Interface)
   >>> moveElement in availableActions
   True
   >>> loggerElement in availableActions
@@ -267,7 +267,7 @@ itself implies IAttributeAnnotatable.
   >>> haltElement in availableActions
   True
   
-  >>> availableConditions = utils.allAvailableConditions(context)
+  >>> availableConditions = utils.allAvailableConditions(Interface)
   >>> ifaceElement in availableConditions
   True
   
@@ -532,7 +532,7 @@ An element for IObjectCopiedEvent:
 
 All elements so far:
 
-  >>> map(lambda x: x.title, utils.allAvailableActions(context))
+  >>> map(lambda x: x.title, utils.allAvailableActions(Interface))
   ['Move To Folder', 'Log Event', 'Halt Rule Execution', 'Object Created specific action', 'Object Copied Specific Action']
 
 Filtering for specific events:

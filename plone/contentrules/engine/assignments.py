@@ -44,7 +44,7 @@ class RuleAssignmentManager(OrderedContainer):
         for a in self.values():
             if a.enabled and (bubbled == False or a.bubbles):
                 r = storage.get(a.__name__, None)
-                if r is not None and r.event.providedBy(event):
+                if r is not None and r.enabled and r.event.providedBy(event):
                     rules.append(r)
         return rules
 

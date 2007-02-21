@@ -24,6 +24,7 @@ class Rule(Persistent):
     title = u''
     description = u''
     event = None
+    enabled = True
     __name__ = None
     __parent__ = None
     

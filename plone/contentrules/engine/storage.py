@@ -16,7 +16,3 @@ class RuleStorage(OrderedContainer):
         # but it uses a PersistentDict, which sucks :-/
         OrderedContainer.__init__(self)
         self._data = OOBTree()
-        
-    def getRules(self, eventInstance):
-        return [r for r in self.values() 
-                    if r.event is None or r.event.providedBy(eventInstance)]

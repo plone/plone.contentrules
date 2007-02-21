@@ -7,10 +7,10 @@ def getAvailableConditions(context, eventType):
                 (c.event is None or eventType.isOrExtends(c.event)) and
                 (c.for_ is None or c.for_.providedBy(context))]
     
-def allAvailableConditions(context):
+def allAvailableConditions(eventType):
     conditions = getAllUtilitiesRegisteredFor(IRuleCondition)
     return [c for c in conditions if 
-                c.for_ is None or c.for_.providedBy(context)]
+                (c.event is None or eventType.isOrExtends(c.event))]
     
 def getAvailableActions(context, eventType):
     actions = getAllUtilitiesRegisteredFor(IRuleAction)
@@ -18,7 +18,7 @@ def getAvailableActions(context, eventType):
                 (a.event is None or eventType.isOrExtends(a.event)) and
                 (a.for_ is None or a.for_.providedBy(context))]
     
-def allAvailableActions(context):
+def allAvailableActions(eventType):
     actions = getAllUtilitiesRegisteredFor(IRuleAction)
     return [a for a in actions if 
-                a.for_ is None or a.for_.providedBy(context)]
+                (a.event is None or eventType.isOrExtends(a.event))]
