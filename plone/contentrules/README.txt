@@ -259,7 +259,10 @@ itself implies IAttributeAnnotatable.
 
   >>> from plone.contentrules.engine import utils
   
-  >>> availableActions = utils.allAvailableActions(Interface)
+The allAvailableActions() and allAvailableConditions() functions return those
+actions or conditions applicable for a particular type of event.
+  
+  >>> availableActions = utils.allAvailableActions(IObjectEvent)
   >>> moveElement in availableActions
   True
   >>> loggerElement in availableActions
@@ -530,10 +533,18 @@ An element for IObjectCopiedEvent:
   >>> getUtility(IRuleAction, name="test.objectcopied")
   <plone.contentrules.rule.element.RuleAction object at ...>
 
-All elements so far:
+All elements so far, applicable for object events:
 
-  >>> map(lambda x: x.title, utils.allAvailableActions(Interface))
+  >>> map(lambda x: x.title, utils.allAvailableActions(IObjectEvent))
+  ['Move To Folder', 'Log Event', 'Halt Rule Execution']
+
+For a more specific event, we may get more elements (i.e. those that also 
+apply to more general events):
+
+  >>> map(lambda x: x.title, utils.allAvailableActions(IObjectCopiedEvent))
   ['Move To Folder', 'Log Event', 'Halt Rule Execution', 'Object Created specific action', 'Object Copied Specific Action']
+  >>> map(lambda x: x.title, utils.allAvailableActions(IObjectCreatedEvent))
+  ['Move To Folder', 'Log Event', 'Halt Rule Execution', 'Object Created specific action']
 
 Filtering for specific events:
 
