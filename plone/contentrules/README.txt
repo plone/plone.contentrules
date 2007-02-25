@@ -456,7 +456,6 @@ Now consider what would happen if the interface condition failed:
   >>> otherContext = OtherContent()
   
   >>> otherManager = IRuleAssignmentManager(otherContext)
-  >>> from copy import copy
   >>> otherManager[testRule3.__name__] = RuleAssignment(testRule3.__name__, enabled=True, bubbles=False)
   
   >>> otherRuleExecutor = IRuleExecutor(otherContext)
@@ -468,6 +467,29 @@ Notice that there was no output.
   >>> directlyProvides(otherContext, IMyContent)
   >>> otherRuleExecutor(someEvent)
   Tried to execute MoveToFolderExecutor, but not implemented
+  
+It is also possible to add more specific filters to which rules get executed.
+Here is an example that filters out the duplicate rules.
+
+  >>> class RuleDupeFilter(object):
+  ...     executed = []
+  ...     def __call__(self, rule):
+  ...         if rule.__name__ in self.executed:
+  ...             return False
+  ...         else:
+  ...             self.executed.append(rule.__name__)
+  ...             return True
+  
+  >>> dupeFilter = RuleDupeFilter()
+  >>> localRuleExecutor(someEvent, rule_filter=dupeFilter)
+  Tried to execute MoveToFolderExecutor, but not implemented
+  Tried to execute MoveToFolderExecutor, but not implemented
+  Rule Execution aborted at HaltAction
+  Tried to execute MoveToFolderExecutor, but not implemented
+  >>> otherRuleExecutor(someEvent, rule_filter=dupeFilter)
+
+The second rule executor will not execute the rule testRule3, since it was
+already executed by the first one.
   
 Event Filtering
 ---------------

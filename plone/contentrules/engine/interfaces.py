@@ -45,10 +45,13 @@ class IRuleExecutor(Interface):
     Typically, a content object will be adapted to this interface
     """
     
-    def __call__(event, bubbled=False):
+    def __call__(event, bubbled=False, rule_filter=None):
         """Execute all rules applicable in the current context
         
         event is the triggering event. bubbled should be True if the rules
         are being executed as part of a bubbling up of events (i.e. this
-        is a parent of the context where the event was triggered).
+        is a parent of the context where the event was triggered). filter,
+        if given, is a callable that will be passed each rule in turn and
+        can vote on whether it should be executed by returning True or
+        False.
         """
