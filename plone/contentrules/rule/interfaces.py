@@ -23,15 +23,7 @@ class IRuleElementData(Interface):
     summary = schema.Text(title=u"Summary",
                           description=u"A human-readable description of this element as it is configured",
                           required=True)
-    
-class IRuleConditionData(IRuleElementData):
-    """Marker interface for rule condition data.
-    """
-    
-class IRuleActionData(IRuleElementData):
-    """Marker interface for rule action data.
-    """
-    
+        
 class IRuleElement(Interface):
     """Base interface for rule elements (actions and conditions)
     
