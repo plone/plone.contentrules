@@ -14,7 +14,12 @@ somewhat similar to user-assembled mail filtering rules or something like
 Apple's Automator. It is used by plone.app.contentrules to provide such 
 functionality for Plone.
 """,
-      classifiers=[], # Get strings from http://www.python.org/pypi?%3Aaction=list_classifiers
+      classifiers=[
+        "Framework :: Plone",
+        "Framework :: Zope2",
+        "License :: OSI Approved :: GNU General Public License (GPL)",
+        "Programming Language :: Python",
+        ],
       keywords='',
       author='Markus Fuhrer, Martin Aspeli',
       author_email='plone-developers@lists.sourceforge.net',
