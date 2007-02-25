@@ -53,11 +53,18 @@ will be able to identify this as an action element.
   >>> class IMoveToFolderAction(IRuleActionData):
   ...     targetFolder = schema.TextLine(title=u"Target Folder")
   
-Create the actual class for holding the configuration data:
+Create the actual class for holding the configuration data. The element
+and summary properties come from IRuleActionData and are used by the
+user interface to discover the edit view and present a title and summery
+to the user:
   
   >>> class MoveToFolderAction(Persistent):
   ...     implements(IMoveToFolderAction)
   ...     targetFolder = ''
+  ...     element = "test.moveToFolder"
+  ...     @property
+  ...     def summary(self):
+  ...         return "Move to folder " + self.targetFolder
 
 In order to be able to execute the rule elements that form a rule, they must be
 adaptable to IExecutable. This should be a multi-adapter from 
@@ -125,7 +132,9 @@ A factory class holding configuration data:
   ...     loggingLevel = ''
   ...     targetLogger = ''
   ...     message = ''
-
+  ...     element = "test.logger"
+  ...     summary = "Log a message"
+ 
 As well as the executor that does the actual logging, capable of being adapted
 to IExecutable. In this case, it will adapt any context and any event.
 
@@ -174,6 +183,10 @@ a given interface.
   >>> class InterfaceCondition(object):
   ...     implements (IInterfaceCondition)
   ...     iface = None
+  ...     element = "test.interface"
+  ...     @property
+  ...     def summary(self):
+  ...         return "Check for interface " + self.iface.__identifier__
 
   >>> class InterfaceConditionExecutor(object):
   ...     implements(IExecutable)
@@ -211,6 +224,8 @@ present:
 
   >>> class HaltExecutionAction(Persistent):
   ...     implements (IHaltExecutionAction)
+  ...     element = "test.halt"
+  ...     summary = "Halt!"
 
   >>> class HaltExecutionExecutor(object):
   ...     implements(IExecutable)
@@ -287,29 +302,26 @@ instance of this rule element.
   >>> configuredAction
   <MoveToFolderAction object at ...>
 
-The element, once created, now needs to be saved as part of a rule. Note that
-we wrap the element instance in a Node, so that we can keep track of the type 
-of element it came from. This allows us to look up the edit view and present
-meta-data such as the title of the element type.
+The element, once created, now needs to be saved as part of a rule.
 
-  >>> from plone.contentrules.rule.rule import Rule, Node
+  >>> from plone.contentrules.rule.rule import Rule
   >>> testRule = Rule()
   >>> testRule.title = "Fairly simple test rule"
   >>> testRule.description = "some test actions"
   >>> testRule.event = Interface
-  >>> testRule.elements.append(Node('test.moveToFolder', configuredAction))
+  >>> testRule.actions.append(configuredAction)
   
 Rules can have many elements. To demonstrate, we will first add the element 
 again, so it executes twice:
 
-  >>> testRule.elements.append(Node('test.moveToFolder', configuredAction))
+  >>> testRule.actions.append(configuredAction)
 
 Additionally, we will manually add two halt actions, to see if rules really 
 stop executing:
 
   >>> haltActionInstance = HaltExecutionAction()
-  >>> testRule.elements.append(Node('test.halt', haltActionInstance))
-  >>> testRule.elements.append(Node('test.halt', haltActionInstance))
+  >>> testRule.actions.append(haltActionInstance)
+  >>> testRule.actions.append(haltActionInstance)
 
 The second halt action should never get executed.
 
@@ -320,7 +332,7 @@ executed.
   >>> testRule2.title = "A fairly simple test rule"
   >>> testRule2.description = "only containing a moveToFolderAction"
   >>> testRule2.event = Interface
-  >>> testRule2.elements.append(Node('test.moveToFolder', configuredAction))
+  >>> testRule2.actions.append(configuredAction)
 
 A third rule will be used to demonstrate a condition:
 
@@ -334,8 +346,8 @@ A third rule will be used to demonstrate a condition:
   >>> testRule3.title = "A rule for IMyContent"
   >>> testRule3.description = "only execute on IMyContent"
   >>> testRule3.event = Interface
-  >>> testRule3.elements.append(Node('test.interface', interfaceConditionInstance))
-  >>> testRule3.elements.append(Node('test.moveToFolder', moveToFolderAction))
+  >>> testRule3.conditions.append(interfaceConditionInstance)
+  >>> testRule3.conditions.append(moveToFolderAction)
 
 Managing rules relative to objects
 ----------------------------------

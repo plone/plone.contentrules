@@ -6,15 +6,7 @@ from zope.component import adapts, getMultiAdapter
 
 from plone.contentrules.rule.interfaces import IRule
 from plone.contentrules.rule.interfaces import IExecutable
-from plone.contentrules.rule.interfaces import IRuleElementNode
 
-class Node(Persistent):
-    implements(IRuleElementNode)
-    
-    def __init__(self, name, instance):
-        self.name = name
-        self.instance = instance
-        
 class Rule(Persistent):
     """A rule.
     """
@@ -25,11 +17,14 @@ class Rule(Persistent):
     description = u''
     event = None
     enabled = True
+    stop = False
+    
     __name__ = None
     __parent__ = None
     
-    def __init__(self, elements=None):
-        self.elements = PersistentList()
+    def __init__(self):
+        self.conditions = PersistentList()
+        self.actions = PersistentList()
 
 class RuleExecutable(object):
     """An adapter capable of executing a rule
@@ -44,8 +39,12 @@ class RuleExecutable(object):
         self.event = event
     
     def __call__(self):
-        for element in self.rule.elements:
-            executable = getMultiAdapter((self.context, element.instance, self.event), IExecutable)
+        for condition in self.rule.conditions:
+            executable = getMultiAdapter((self.context, condition, self.event), IExecutable)
+            if not executable():
+                return False
+        for action in self.rule.actions:
+            executable = getMultiAdapter((self.context, action, self.event), IExecutable)
             if not executable():
                 return False
         return True

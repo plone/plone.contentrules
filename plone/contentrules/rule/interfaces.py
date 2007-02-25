@@ -2,7 +2,7 @@
 """
 __docformat__ = 'restructuredtext'
 
-from zope.interface import Interface
+from zope.interface import Interface, Attribute
 from zope.interface.interfaces import IInterface
 
 from zope.app.container.interfaces import IReadContainer
@@ -12,9 +12,17 @@ from zope import schema
 from zope.configuration import fields as configuration_fields
 
 class IRuleElementData(Interface):
-    """Marker interface for rule element data (the configuration of actions
+    """Metadata for rule element data (the configuration of actions
     or conditions).
     """
+    
+    element = schema.ASCII(title=u"Rule element",
+                              description=u"The name of the rule action or condition",
+                              required=True)
+                              
+    summary = schema.Text(title=u"Summary",
+                          description=u"A human-readable description of this element as it is configured",
+                          required=True)
     
 class IRuleConditionData(IRuleElementData):
     """Marker interface for rule condition data.
@@ -73,37 +81,14 @@ class IRuleAction(IRuleElement):
     Actions can perform operations, presuming preceding conditions do not fail.
     Once an action is finished, the next element will be executed.
     """
-
-class IRuleElementNode(Interface):
-    """A node in the list of rule elements
-    """
-    
-    name = schema.TextLine(title = u'Name',
-                           description = u'The name of the utility that provides the type of rule element this is',
-                           required = True,
-                           readonly = True,)
-                           
-    instance = schema.Object(title = u'Instance',
-                             description = u"An instance that is created by the rule's add form"
-                                            "(i.e. the configuration for this specific element)",
-                             schema = Interface, # We don't know what type of schema it is
-                             required = True,
-                             readonly = True)
                              
 class IRuleEventType(IInterface):
     """Marker interface for event interfaces that can be used as the 'event'
     type of an IRule.
     """
 
-class IRule(IContained):
-    """A rule - a collection of rule elements.
-    
-    A rule is composed, normally through the user interface, of conditions and
-    actions. Upon some event, rules that are relevant in the given context will
-    be executed by adapting them to IExecutable and running its execute()
-    method.
-    
-    When saved in a rule storage, it will be given a name.
+class IRuleConfiguration(Interface):
+    """Configurable options for a rule
     """
     
     title = schema.TextLine(title = u'Title',
@@ -118,15 +103,37 @@ class IRule(IContained):
                           description = u'The event that can trigger this rule',
                           required = True,
                           vocabulary="plone.contentrules.events")
-    
-    elements = schema.List(title = u'Rule elements',
-                           description = u'The elements that the rule consists of',
-                           required = True)
-                           
+
     enabled = schema.Bool(title = u'Enabled',
                           description = u'Whether or not the rule is currently enabled',
                           required = True,
                           default = True)
+
+    stop = schema.Bool(title = u"Stop executing rules",
+                       description = u"Whether or not exection of further rules should stop after this rule is executed",
+                       required = True,
+                       default = False)
+
+class IRule(IContained, IRuleConfiguration):
+    """A rule - a collection of rule elements.
+    
+    A rule is composed, normally through the user interface, of conditions and
+    actions. Upon some event, rules that are relevant in the given context will
+    be executed by adapting them to IExecutable and running its execute()
+    method.
+    
+    When saved in a rule storage, it will be given a name.
+    """
+    
+    
+    conditions = schema.List(title = u'Conditions',
+                             description = u'The conditions of this rule',
+                             required = True)
+
+    actions = schema.List(title = u'Actions',
+                          description = u'The actions of this rule',
+                          required = True)
+                           
 
 class IExecutable(Interface):
     """An item which can be executed.
