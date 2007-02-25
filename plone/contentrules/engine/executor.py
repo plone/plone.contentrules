@@ -5,6 +5,8 @@ from plone.contentrules.engine.interfaces import IRuleExecutor
 from plone.contentrules.engine.interfaces import IRuleAssignable
 from plone.contentrules.engine.interfaces import IRuleAssignmentManager
 
+from plone.contentrules.engine.interfaces import StopRule
+
 from plone.contentrules.rule.interfaces import IExecutable
 
 class RuleExecutor(object):
@@ -23,3 +25,5 @@ class RuleExecutor(object):
             if rule_filter is None or rule_filter(rule) == True:
                 executable = getMultiAdapter((self.context, rule, event), IExecutable)
                 executable()
+                if rule.stop:
+                    raise StopRule(rule)

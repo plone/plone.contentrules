@@ -8,6 +8,13 @@ from zope.app.container.interfaces import IContainerNamesContainer
 from zope.app.container.constraints import contains
 from zope.annotation.interfaces import IAttributeAnnotatable
 
+class StopRule(Exception):
+    """An event that informs us that rule execution should be aborted.
+    """
+    
+    def __init__(self, rule):
+        self.rule = rule
+
 class IRuleStorage(IOrderedContainer, IContainerNamesContainer):
     """A storage for rules. This is registered as a local utility.
     """

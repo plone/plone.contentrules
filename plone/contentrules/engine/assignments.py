@@ -1,7 +1,7 @@
 from persistent import Persistent
 
 from zope.interface import implements, implementer
-from zope.component import adapter, getUtility
+from zope.component import adapter, queryUtility
 
 from zope.annotation.interfaces import IAnnotations
 from zope.app.container.ordered import OrderedContainer
@@ -40,12 +40,13 @@ class RuleAssignmentManager(OrderedContainer):
 
     def getRules(self, event, bubbled=False):
         rules = []
-        storage = getUtility(IRuleStorage)
-        for a in self.values():
-            if a.enabled and (bubbled == False or a.bubbles):
-                r = storage.get(a.__name__, None)
-                if r is not None and r.enabled and r.event.providedBy(event):
-                    rules.append(r)
+        storage = queryUtility(IRuleStorage)
+        if storage is not None:
+            for a in self.values():
+                if a.enabled and (bubbled == False or a.bubbles):
+                    r = storage.get(a.__name__, None)
+                    if r is not None and r.enabled and r.event.providedBy(event):
+                        rules.append(r)
         return rules
 
 @adapter(IRuleAssignable)
