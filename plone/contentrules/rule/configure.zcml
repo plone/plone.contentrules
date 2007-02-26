@@ -6,7 +6,7 @@
     
     <utility 
       component=".eventvocab.EventTypesVocabulary" 
-      name="Rule event types" 
+      name="plone.contentrules.events" 
       />
             
 </configure>

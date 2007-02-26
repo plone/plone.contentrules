@@ -5,8 +5,8 @@
 plone.contentrules is a pure Zope 3 implementation of a content rules engine.
 Content rules are managed by the user, and may be likened to email filter
 rules or Apple's Automator. A user creates a Rule, and composes a sequence
-of rule elements, specifically Conditions and Actions. Rules are managed
-relative to a context via a Rule Manager.
+of rule elements, specifically Conditions and Actions. Rules are assigned to
+a context via a Rule Assignment Manager.
 
 An event handler in the application layer (such as the complementary 
 plone.app.contentrules package) will query a Rule Manager for all applicable
@@ -39,25 +39,30 @@ Lets start with some basic imports:
   >>> from zope.component import provideAdapter
 
   >>> from plone.contentrules.rule.interfaces import IRuleCondition, IRuleAction
-  >>> from plone.contentrules.rule.interfaces import IRuleConditionData
-  >>> from plone.contentrules.rule.interfaces import IRuleActionData
-  >>> from plone.contentrules.rule.element import RuleCondition, RuleAction 
+  >>> from plone.contentrules.rule.interfaces import IRuleElementData
+  >>> from plone.contentrules.rule.element import RuleCondition, RuleAction
   
   >>> from persistent import Persistent
   
 We create an interface describing the schema of the configuration of the custom 
 rule element. This allows us to use zope.formlib to create add and edit forms,
-for example. We use the IRuleActionData marker as a base class so that the UI
-will be able to identify this as an action element.
+for example.
 
-  >>> class IMoveToFolderAction(IRuleActionData):
+  >>> class IMoveToFolderAction(Interface):
   ...     targetFolder = schema.TextLine(title=u"Target Folder")
   
-Create the actual class for holding the configuration data:
+Create the actual class for holding the configuration data. The element
+and summary properties come from IRuleElementData and are used by the
+user interface to discover the edit view and present a title and summery
+to the user:
   
   >>> class MoveToFolderAction(Persistent):
-  ...     implements(IMoveToFolderAction)
+  ...     implements(IMoveToFolderAction, IRuleElementData)
   ...     targetFolder = ''
+  ...     element = "test.moveToFolder"
+  ...     @property
+  ...     def summary(self):
+  ...         return "Move to folder " + self.targetFolder
 
 In order to be able to execute the rule elements that form a rule, they must be
 adaptable to IExecutable. This should be a multi-adapter from 
@@ -111,7 +116,7 @@ First, let us make some sort of temporary logger:
 
 Again, we have to define an interface for the logger action:
 
-  >>> class ILoggerAction(IRuleActionData):
+  >>> class ILoggerAction(Interface):
   ...     targetLogger = schema.TextLine(title=u"target logger",default=u"temporary_logger")
   ...     loggingLevel = schema.Int(title=u"logging level", default=1000)
   ...     loggerMessage = schema.TextLine(title=u"message",
@@ -121,11 +126,13 @@ Again, we have to define an interface for the logger action:
 A factory class holding configuration data:
          
   >>> class LoggerAction(Persistent):
-  ...     implements(ILoggerAction)
+  ...     implements(ILoggerAction, IRuleElementData)
   ...     loggingLevel = ''
   ...     targetLogger = ''
   ...     message = ''
-
+  ...     element = "test.logger"
+  ...     summary = "Log a message"
+ 
 As well as the executor that does the actual logging, capable of being adapted
 to IExecutable. In this case, it will adapt any context and any event.
 
@@ -168,12 +175,16 @@ As a condition, consider one which only executes rules if the context provides
 a given interface.
 
   >>> from zope.interface import Attribute
-  >>> class IInterfaceCondition(IRuleConditionData):
+  >>> class IInterfaceCondition(Interface):
   ...     iface = Attribute(u'the interface')
 
   >>> class InterfaceCondition(object):
-  ...     implements (IInterfaceCondition)
+  ...     implements (IInterfaceCondition, IRuleElementData)
   ...     iface = None
+  ...     element = "test.interface"
+  ...     @property
+  ...     def summary(self):
+  ...         return "Check for interface " + self.iface.__identifier__
 
   >>> class InterfaceConditionExecutor(object):
   ...     implements(IExecutable)
@@ -210,7 +221,9 @@ present:
   ...     pass
 
   >>> class HaltExecutionAction(Persistent):
-  ...     implements (IHaltExecutionAction)
+  ...     implements (IHaltExecutionAction, IRuleElementData)
+  ...     element = "test.halt"
+  ...     summary = "Halt!"
 
   >>> class HaltExecutionExecutor(object):
   ...     implements(IExecutable)
@@ -243,24 +256,26 @@ Composing elements into rules
 ------------------------------
 
 In the real world, the UI would most likely ask for all types of actions and
-conditions applicable in the given context. The IRuleManager interface and 
-default adapter can provide this information.
+conditions applicable in the given context. The functions 
+plone.app.engine.utils can help with this.
 
-The default adapter adapts the IRuleContainer marker interface, which itself
-implies IAttributeAnnotatable.
+The default adapters reply on the IRuleContainer marker interface, which 
+itself implies IAttributeAnnotatable.
 
-  >>> from plone.contentrules.engine.interfaces import IRuleContainer
-  >>> class IMyContent(IRuleContainer):
+  >>> from plone.contentrules.engine.interfaces import IRuleAssignable
+  >>> class IMyContent(IRuleAssignable):
   ...     pass
   >>> class MyContent(object):
   ...     implements(IMyContent)
   
   >>> context = MyContent()
 
-  >>> from plone.contentrules.engine.interfaces import IRuleManager
-  >>> localRuleManager = IRuleManager(context)
+  >>> from plone.contentrules.engine import utils
   
-  >>> availableActions = localRuleManager.allAvailableActions()
+The allAvailableActions() and allAvailableConditions() functions return those
+actions or conditions applicable for a particular type of event.
+  
+  >>> availableActions = utils.allAvailableActions(IObjectEvent)
   >>> moveElement in availableActions
   True
   >>> loggerElement in availableActions
@@ -268,7 +283,7 @@ implies IAttributeAnnotatable.
   >>> haltElement in availableActions
   True
   
-  >>> availableConditions = localRuleManager.allAvailableConditions()
+  >>> availableConditions = utils.allAvailableConditions(Interface)
   >>> ifaceElement in availableConditions
   True
   
@@ -285,29 +300,26 @@ instance of this rule element.
   >>> configuredAction
   <MoveToFolderAction object at ...>
 
-The element, once created, now needs to be saved as part of a rule. Note that
-we wrap the element instance in a Node, so that we can keep track of the type 
-of element it came from. This allows us to look up the edit view and present
-meta-data such as the title of the element type.
+The element, once created, now needs to be saved as part of a rule.
 
-  >>> from plone.contentrules.rule.rule import Rule, Node
+  >>> from plone.contentrules.rule.rule import Rule
   >>> testRule = Rule()
   >>> testRule.title = "Fairly simple test rule"
   >>> testRule.description = "some test actions"
   >>> testRule.event = Interface
-  >>> testRule.elements.append(Node('test.moveToFolder', configuredAction))
+  >>> testRule.actions.append(configuredAction)
   
 Rules can have many elements. To demonstrate, we will first add the element 
 again, so it executes twice:
 
-  >>> testRule.elements.append(Node('test.moveToFolder', configuredAction))
+  >>> testRule.actions.append(configuredAction)
 
 Additionally, we will manually add two halt actions, to see if rules really 
 stop executing:
 
   >>> haltActionInstance = HaltExecutionAction()
-  >>> testRule.elements.append(Node('test.halt', haltActionInstance))
-  >>> testRule.elements.append(Node('test.halt', haltActionInstance))
+  >>> testRule.actions.append(haltActionInstance)
+  >>> testRule.actions.append(haltActionInstance)
 
 The second halt action should never get executed.
 
@@ -318,7 +330,7 @@ executed.
   >>> testRule2.title = "A fairly simple test rule"
   >>> testRule2.description = "only containing a moveToFolderAction"
   >>> testRule2.event = Interface
-  >>> testRule2.elements.append(Node('test.moveToFolder', configuredAction))
+  >>> testRule2.actions.append(configuredAction)
 
 A third rule will be used to demonstrate a condition:
 
@@ -332,14 +344,14 @@ A third rule will be used to demonstrate a condition:
   >>> testRule3.title = "A rule for IMyContent"
   >>> testRule3.description = "only execute on IMyContent"
   >>> testRule3.event = Interface
-  >>> testRule3.elements.append(Node('test.interface', interfaceConditionInstance))
-  >>> testRule3.elements.append(Node('test.moveToFolder', moveToFolderAction))
+  >>> testRule3.conditions.append(interfaceConditionInstance)
+  >>> testRule3.conditions.append(moveToFolderAction)
 
 Managing rules relative to objects
 ----------------------------------
 
-Rules are stored in an IRuleStorage. Any IRuleContainer-marked object can be
-adapted to IRuleStorage - its rules will be stored in an annotation. 
+Rules are stored in an IRuleStorage - a local utility. Rules are then assigned
+to a context by way of an IRuleAssignmentManager.
 
 The rule storage is an ordered container. It is also marked with 
 IContainerNamesContainer because by default, an INameChooser should be
@@ -347,7 +359,11 @@ used to pick a name for rules. This is simply because rules normally don't
 have sensible names.
   
   >>> from plone.contentrules.engine.interfaces import IRuleStorage
-  >>> ruleStorage = IRuleStorage(context)
+  >>> from plone.contentrules.engine.storage import RuleStorage
+  >>> from zope.component import provideUtility
+
+  >>> ruleStorage = RuleStorage()
+  >>> provideUtility(provides=IRuleStorage, component=ruleStorage)
   
   >>> from zope.app.container.interfaces import IOrderedContainer
   >>> from zope.app.container.interfaces import IContainerNamesContainer
@@ -383,6 +399,23 @@ We add the other rules too, so that they can be used later.
   >>> ruleStorage[u'testRule2'] = testRule2
   >>> ruleStorage[u'testRule3'] = testRule3
 
+We now need to assign rules to the context. The assignments use the same
+names as the rules, since a particular rule can be assigned to a particular
+context only once.
+
+  >>> from plone.contentrules.engine.interfaces import IRuleAssignmentManager
+  >>> manager = IRuleAssignmentManager(context)
+  
+  >>> from plone.contentrules.engine.assignments import RuleAssignment
+  >>> manager[testRule.__name__] = RuleAssignment(testRule.__name__, enabled=True, bubbles=False)
+
+The enabled argument can turn off a given rule temporarily. The bubbles 
+argument, if True, means that the rule will apply to events in subfolders,
+not just the current folder.
+
+  >>> manager[testRule2.__name__] = RuleAssignment(testRule2.__name__, enabled=False, bubbles=False)
+  >>> manager[testRule3.__name__] = RuleAssignment(testRule3.__name__, enabled=True, bubbles=True)
+
 Executing rules
 ---------------
 
@@ -400,36 +433,63 @@ any and all events.
   >>> from zope.component.interfaces import ObjectEvent
   >>> someEvent = ObjectEvent(context)
 
-  >>> localRuleExecutor.executeAll(someEvent)
+  >>> localRuleExecutor(someEvent)
   Tried to execute MoveToFolderExecutor, but not implemented
   Tried to execute MoveToFolderExecutor, but not implemented
   Rule Execution aborted at HaltAction
-  Tried to execute MoveToFolderExecutor, but not implemented
   Tried to execute MoveToFolderExecutor, but not implemented
 
 The first three output lines above are from the first rule, the fourth from the 
-second rule, and the fifth from the third rule.
+third rule. There was no output from the disabled rule.
 
-Now consider what would happen if the interface condition failed - we should
-not get the last line from testRule3, because it should abort before it got
-there.
+Notice that the first rule does not bubble. The event handlers in the 
+application layer should tell the executor this when it's executing rules
+higher up. Rules that are assigned not to bubble will not be executed.
+
+  >>> localRuleExecutor(someEvent, bubbled=True)
+  Tried to execute MoveToFolderExecutor, but not implemented
+
+Now consider what would happen if the interface condition failed:
 
   >>> class OtherContent(object):
-  ...     implements(IRuleContainer)
+  ...     implements(IRuleAssignable)
   >>> otherContext = OtherContent()
   
-  >>> otherRuleStorage = IRuleStorage(otherContext)
-  >>> from copy import copy
-  >>> otherRuleStorage[u'testRuleCopy'] = copy(testRule)
-  >>> otherRuleStorage[u'testRule2Copy'] = copy(testRule2)
-  >>> otherRuleStorage[u'testRule3Copy'] = copy(testRule3)
+  >>> otherManager = IRuleAssignmentManager(otherContext)
+  >>> otherManager[testRule3.__name__] = RuleAssignment(testRule3.__name__, enabled=True, bubbles=False)
   
   >>> otherRuleExecutor = IRuleExecutor(otherContext)
-  >>> otherRuleExecutor.executeAll(someEvent)
+  >>> otherRuleExecutor(someEvent)
+
+Notice that there was no output.
+  
+  >>> from zope.interface import directlyProvides
+  >>> directlyProvides(otherContext, IMyContent)
+  >>> otherRuleExecutor(someEvent)
+  Tried to execute MoveToFolderExecutor, but not implemented
+  
+It is also possible to add more specific filters to which rules get executed.
+Here is an example that filters out the duplicate rules.
+
+  >>> class RuleDupeFilter(object):
+  ...     executed = []
+  ...     def __call__(self, rule):
+  ...         if rule.__name__ in self.executed:
+  ...             return False
+  ...         else:
+  ...             self.executed.append(rule.__name__)
+  ...             return True
+  
+  >>> dupeFilter = RuleDupeFilter()
+  >>> localRuleExecutor(someEvent, rule_filter=dupeFilter)
   Tried to execute MoveToFolderExecutor, but not implemented
   Tried to execute MoveToFolderExecutor, but not implemented
   Rule Execution aborted at HaltAction
   Tried to execute MoveToFolderExecutor, but not implemented
+  >>> otherRuleExecutor(someEvent, rule_filter=dupeFilter)
+
+The second rule executor will not execute the rule testRule3, since it was
+already executed by the first one.
   
 Event Filtering
 ---------------
@@ -505,21 +565,29 @@ An element for IObjectCopiedEvent:
   >>> getUtility(IRuleAction, name="test.objectcopied")
   <plone.contentrules.rule.element.RuleAction object at ...>
 
-All elements so far:
+All elements so far, applicable for object events:
 
-  >>> map(lambda x: x.title, localRuleManager.allAvailableActions())
+  >>> map(lambda x: x.title, utils.allAvailableActions(IObjectEvent))
+  ['Move To Folder', 'Log Event', 'Halt Rule Execution']
+
+For a more specific event, we may get more elements (i.e. those that also 
+apply to more general events):
+
+  >>> map(lambda x: x.title, utils.allAvailableActions(IObjectCopiedEvent))
   ['Move To Folder', 'Log Event', 'Halt Rule Execution', 'Object Created specific action', 'Object Copied Specific Action']
+  >>> map(lambda x: x.title, utils.allAvailableActions(IObjectCreatedEvent))
+  ['Move To Folder', 'Log Event', 'Halt Rule Execution', 'Object Created specific action']
 
 Filtering for specific events:
 
   >>> from zope.lifecycleevent.interfaces import IObjectCreatedEvent, IObjectCopiedEvent
   >>> newContext = MyContent()
   
-  >>> sorted([a.title for a in localRuleManager.getAvailableActions(IObjectEvent)])
+  >>> sorted([a.title for a in utils.getAvailableActions(context, IObjectEvent)])
   ['Halt Rule Execution', 'Log Event', 'Move To Folder']
   
-  >>> sorted([a.title for a in localRuleManager.getAvailableActions(IObjectCreatedEvent)])
+  >>> sorted([a.title for a in utils.getAvailableActions(context, IObjectCreatedEvent)])
   ['Halt Rule Execution', 'Log Event', 'Move To Folder', 'Object Created specific action']
   
-  >>> sorted([a.title for a in localRuleManager.getAvailableActions(IObjectCopiedEvent)])
+  >>> sorted([a.title for a in utils.getAvailableActions(context, IObjectCopiedEvent)])
   ['Halt Rule Execution', 'Log Event', 'Move To Folder', 'Object Copied Specific Action', 'Object Created specific action']

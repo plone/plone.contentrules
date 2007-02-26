@@ -18,9 +18,6 @@ class RuleElement(object):
     schema = None
     factory = None
     
-    def __str__(self):
-        return u"%s: %s"%(self.title, self.description)
-    
 class RuleCondition(RuleElement):
     """A rule condition.
     

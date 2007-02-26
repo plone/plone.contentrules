@@ -15,8 +15,8 @@ Apple's Automator. It is used by plone.app.contentrules to provide such
 functionality for Plone.
 """,
       classifiers=[
-        "Framework :: Plone",
         "Framework :: Zope2",
+        "Framework :: Zope3",
         "License :: OSI Approved :: GNU General Public License (GPL)",
         "Programming Language :: Python",
         ],

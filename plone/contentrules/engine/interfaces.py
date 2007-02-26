@@ -1,60 +1,50 @@
-"""
-"""
-__docformat__ = 'restructuredtext'
-
-from zope.interface import Interface
+from zope.interface import Interface, Attribute
 from zope import schema
 
+from zope.app.container.interfaces import IContained
 from zope.app.container.interfaces import IOrderedContainer
 from zope.app.container.interfaces import IContainerNamesContainer
 
 from zope.app.container.constraints import contains
 from zope.annotation.interfaces import IAttributeAnnotatable
 
-class IRuleContainer(IAttributeAnnotatable):
-    """Marker interface for objects that can store rules.
+class StopRule(Exception):
+    """An event that informs us that rule execution should be aborted.
     """
+    
+    def __init__(self, rule):
+        self.rule = rule
 
 class IRuleStorage(IOrderedContainer, IContainerNamesContainer):
-    """A storage for rules.
+    """A storage for rules. This is registered as a local utility.
     """
     contains('plone.contentrules.rule.interfaces.IRule')
     
-    def getRules(event):
-        """Get all rules registered for the given event.
-        """
-    
-class IRuleManager(Interface):
-    """An object that is capable of managing rules. 
-    
-    Normally, the same object will be adapted to IRuleStorage and IRuleManager,
-    the first to retrieve and store rules, the second to discover available
-    conditions and actions.
+class IRuleAssignable(IAttributeAnnotatable):
+    """Marker interface for objects that can be assigned rules
     """
     
-    def getAvailableConditions(eventType):
-        """Get a list of all IRuleConditions applicable to the given event
-        (which should be an interface).
-        
-        Also includes non-event-specific elements!
-        """
-        
-    def allAvailableConditions():
-        """Return a mapping of all available IRuleConditions, with events as
-        keys. One key will be None, for the non-event-specific elements.
-        """
-        
-    def getAvailableActions(eventType):
-        """Get a list of all IRuleActions applicable to the given event
-        (which should be an interface).
-        
-        Also includes non-event-specific elements!
-        """
-        
-    def allAvailableActions():
-        """Return a mapping of all available IRuleActions, with events as
-        keys. One key will be None, for the non-event-specific elements.
-        """
+class IRuleAssignment(IContained):
+    """An assignment of a rule to a context
+    """
+    
+    __name__ = schema.TextLine(title=u"The id of the rule")
+    
+    enabled = schema.Bool(title=u"Whether or not the rule is currently enabled")
+    bubbles = schema.Bool(title=u"Whether or not the rule will apply to objects in subfolders")
+    
+class IRuleAssignmentManager(IOrderedContainer):
+    """An object that is capable of being assigned rules.
+    
+    Normally, an object will be adapted to IRuleAssignmentManager in order 
+    to manipulate the rule assignments in this location.
+    """
+
+    def getRules(event, bubbled=False):
+        """Get all enabled rules registered for the given event and
+        assigned to this context. If bubbled is True, only rules that are
+        bubbleable will be returned.
+        """ 
 
 class IRuleExecutor(Interface):
     """An object that is capable of executing rules.
@@ -62,14 +52,13 @@ class IRuleExecutor(Interface):
     Typically, a content object will be adapted to this interface
     """
     
-    def execute(rule, event):
-        """Execute a rule in the current context
-        
-        event is the triggering event.
-        """
-    
-    def executeAll(event):
+    def __call__(event, bubbled=False, rule_filter=None):
         """Execute all rules applicable in the current context
         
-        event is the triggering event.
+        event is the triggering event. bubbled should be True if the rules
+        are being executed as part of a bubbling up of events (i.e. this
+        is a parent of the context where the event was triggered). filter,
+        if given, is a callable that will be passed each rule in turn and
+        can vote on whether it should be executed by returning True or
+        False.
         """
