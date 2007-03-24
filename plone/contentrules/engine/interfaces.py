@@ -20,6 +20,8 @@ class IRuleStorage(IOrderedContainer, IContainerNamesContainer):
     """
     contains('plone.contentrules.rule.interfaces.IRule')
     
+    active = schema.Bool(title=u"Rules in this storage are active")
+    
 class IRuleAssignable(IAttributeAnnotatable):
     """Marker interface for objects that can be assigned rules
     """

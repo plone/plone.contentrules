@@ -11,6 +11,8 @@ class RuleStorage(OrderedContainer):
     
     implements(IRuleStorage)
 
+    active = True
+
     def __init__(self):
         # XXX: This depends on implementation detail in OrderedContainer,
         # but it uses a PersistentDict, which sucks :-/
