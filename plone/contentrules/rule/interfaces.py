@@ -98,12 +98,10 @@ class IRuleConfiguration(Interface):
 
     enabled = schema.Bool(title = u'Enabled',
                           description = u'Whether or not the rule is currently enabled',
-                          required = True,
                           default = True)
 
     stop = schema.Bool(title = u"Stop executing rules",
-                       description = u"Whether or not exection of further rules should stop after this rule is executed",
-                       required = True,
+                       description = u"Whether or not execution of further rules should stop after this rule is executed",
                        default = False)
 
 class IRule(IContained, IRuleConfiguration):
