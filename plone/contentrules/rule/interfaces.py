@@ -2,14 +2,16 @@
 """
 __docformat__ = 'restructuredtext'
 
-from zope.interface import Interface, Attribute
+from zope.interface import Interface
 from zope.interface.interfaces import IInterface
 
-from zope.app.container.interfaces import IReadContainer
 from zope.app.container.interfaces import IContained
 
 from zope import schema
 from zope.configuration import fields as configuration_fields
+
+from plone.contentrules import PloneMessageFactory as _
+
 
 class IRuleElementData(Interface):
     """Metadata for rule element data (the configuration of actions
@@ -83,25 +85,25 @@ class IRuleConfiguration(Interface):
     """Configurable options for a rule
     """
     
-    title = schema.TextLine(title = u'Title',
-                            description = u'The title of the rule',
+    title = schema.TextLine(title = _(u'Title'),
+                            description = _(u'The title of the rule'),
                             required = True)
 
-    description = schema.Text(title = u'Description',
-                              description = u'A summary of the rule',
+    description = schema.Text(title = _(u'Description'),
+                              description = _(u'A summary of the rule'),
                               required = False)
 
-    event = schema.Choice(title = u'Triggering event',
-                          description = u'The event that can trigger this rule',
+    event = schema.Choice(title = _(u'Triggering event'),
+                          description = _(u'The event that can trigger this rule'),
                           required = True,
                           vocabulary="plone.contentrules.events")
 
-    enabled = schema.Bool(title = u'Enabled',
-                          description = u'Whether or not the rule is currently enabled',
+    enabled = schema.Bool(title = _(u'Enabled'),
+                          description = _(u'Whether or not the rule is currently enabled'),
                           default = True)
 
-    stop = schema.Bool(title = u"Stop executing rules",
-                       description = u"Whether or not execution of further rules should stop after this rule is executed",
+    stop = schema.Bool(title = _(u"Stop executing rules"),
+                       description = _(u"Whether or not execution of further rules should stop after this rule is executed"),
                        default = False)
 
 class IRule(IContained, IRuleConfiguration):

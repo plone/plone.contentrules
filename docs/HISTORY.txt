@@ -2,8 +2,12 @@ Changelog for plone.contentrules
 
     (name of developer listed in brackets)
 
-plone.contentrules - 0.1 Unreleased
+plone.contentrules - 1.0 Unreleased
+
+    - Added i18n markup to the IRuleConfiguration schema, which is used in a
+      user-visible configuration. This closes
+      http://dev.plone.org/plone/ticket/6886.
+      [hannosch]
 
     - Initial package structure.
       [zopeskel]
-
