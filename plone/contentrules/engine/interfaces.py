@@ -62,5 +62,5 @@ class IRuleExecutor(Interface):
         is a parent of the context where the event was triggered). filter,
         if given, is a callable that will be passed each rule in turn and
         can vote on whether it should be executed by returning True or
-        False.
+        False. It should take the arguments (context, rule, event).
         """

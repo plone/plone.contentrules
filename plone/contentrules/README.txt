@@ -473,7 +473,7 @@ Here is an example that filters out the duplicate rules.
 
   >>> class RuleDupeFilter(object):
   ...     executed = []
-  ...     def __call__(self, rule):
+  ...     def __call__(self, context, rule, event):
   ...         if rule.__name__ in self.executed:
   ...             return False
   ...         else:

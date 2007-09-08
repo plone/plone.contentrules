@@ -22,7 +22,7 @@ class RuleExecutor(object):
     def __call__(self, event, bubbled=False, rule_filter=None):
         assignments = IRuleAssignmentManager(self.context)
         for rule in assignments.getRules(event, bubbled=bubbled):
-            if rule_filter is None or rule_filter(rule) == True:
+            if rule_filter is None or rule_filter(self.context, rule, event) == True:
                 executable = getMultiAdapter((self.context, rule, event), IExecutable)
                 executable()
                 if rule.stop:
