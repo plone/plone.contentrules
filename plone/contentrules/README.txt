@@ -97,6 +97,8 @@ result in an object like the one below.
   >>> moveElement.event = IObjectEvent
   >>> moveElement.addview = 'test.moveToFolder'
   >>> moveElement.editview = 'edit.html'
+  >>> moveElement.schema = IMoveToFolderAction
+  >>> moveElement.factory = MoveToFolderAction
   
 The ZCML will register this as a utility providing IRuleAction.
 
@@ -166,6 +168,8 @@ now:
   >>> loggerElement.event = None
   >>> loggerElement.addview = 'test.logger'
   >>> loggerElement.editview = 'edit.html'
+  >>> loggerElement.schema = ILoggerAction
+  >>> loggerElement.factory = LoggerAction
   
   >>> provideUtility(loggerElement, provides=IRuleAction, name="test.logger")
   >>> getUtility(IRuleAction, name="test.logger")
@@ -207,6 +211,8 @@ a given interface.
   >>> ifaceElement.event = None
   >>> ifaceElement.addview = 'test.interfaceCondition'
   >>> ifaceElement.editview = 'edit.html'
+  >>> ifaceElement.schema = IInterfaceCondition
+  >>> ifaceElement.factory = InterfaceCondition
   
   >>> provideUtility(ifaceElement, provides=IRuleCondition, name="test.interface")
   >>> getUtility(IRuleCondition, name="test.interface")
@@ -247,6 +253,8 @@ present:
   >>> haltElement.event = None
   >>> haltElement.addview = 'test.haltExecution'
   >>> haltElement.editview = 'edit.html'
+  >>> haltElement.schema = IHaltExecutionAction
+  >>> haltElement.factory = HaltExecutionAction
   
   >>> provideUtility(haltElement, provides=IRuleAction, name="test.halt")
   >>> getUtility(IRuleAction, name="test.halt")
@@ -533,6 +541,8 @@ An element for IObjectCreatedEvent:
   >>> objectCreatedSpecificElement.event = IObjectCreatedEvent #!
   >>> objectCreatedSpecificElement.addview = 'testing.created'
   >>> objectCreatedSpecificElement.editview = 'edit.html'
+  >>> objectCreatedSpecificElement.schema = IObjectCreatedSpecificAction
+  >>> objectCreatedSpecificElement.factory = ObjectCreatedSpecificAction
   >>> provideUtility(objectCreatedSpecificElement, provides=IRuleAction, name="test.objectcreated")
   >>> getUtility(IRuleAction, name="test.objectcreated")
   <plone.contentrules.rule.element.RuleAction object at ...>
@@ -554,14 +564,16 @@ An element for IObjectCopiedEvent:
   ...     def __call__(self):
   ...         return True
   >>> provideAdapter(ObjectCopiedExecutor)
-  >>> objectCreatedSpecificElement = RuleAction()
-  >>> objectCreatedSpecificElement.title = "Object Copied Specific Action"
-  >>> objectCreatedSpecificElement.description = "is only available for object created events"
-  >>> objectCreatedSpecificElement.for_ = Interface       #!
-  >>> objectCreatedSpecificElement.event = IObjectCopiedEvent #!
-  >>> objectCreatedSpecificElement.addview = 'testing.created'
-  >>> objectCreatedSpecificElement.editview = 'edit.html'
-  >>> provideUtility(objectCreatedSpecificElement, provides=IRuleAction, name="test.objectcopied")
+  >>> objectCopiedSpecificElement = RuleAction()
+  >>> objectCopiedSpecificElement.title = "Object Copied Specific Action"
+  >>> objectCopiedSpecificElement.description = "is only available for object created events"
+  >>> objectCopiedSpecificElement.for_ = Interface       #!
+  >>> objectCopiedSpecificElement.event = IObjectCopiedEvent #!
+  >>> objectCopiedSpecificElement.addview = 'testing.created'
+  >>> objectCopiedSpecificElement.editview = 'edit.html'
+  >>> objectCopiedSpecificElement.schema = IObjectCopiedSpecificAction
+  >>> objectCopiedSpecificElement.factory = ObjectCopiedSpecificAction
+  >>> provideUtility(objectCopiedSpecificElement, provides=IRuleAction, name="test.objectcopied")
   >>> getUtility(IRuleAction, name="test.objectcopied")
   <plone.contentrules.rule.element.RuleAction object at ...>
 
