@@ -3,7 +3,8 @@ from zope.interface import Interface
 from zope import schema
 from zope.configuration import fields as configuration_fields
 
-from zope.app.i18n import ZopeMessageFactory as _
+from plone.contentrules import PloneMessageFactory as _
+
 
 class IRuleElementDirective(Interface):
     """Directive which registers a new rule element.

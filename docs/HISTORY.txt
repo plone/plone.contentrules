@@ -4,6 +4,9 @@ Changelog for plone.contentrules
 
 plone.contentrules - 1.0 Unreleased
 
+    - Use the plone i18n domain for text found in metadirectives.py.
+      [hannosch]
+
     - Added i18n markup to the IRuleConfiguration schema, which is used in a
       user-visible configuration. This closes
       http://dev.plone.org/plone/ticket/6886.
