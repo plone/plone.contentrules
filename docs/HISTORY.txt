@@ -2,7 +2,7 @@ Changelog for plone.contentrules
 
     (name of developer listed in brackets)
 
-plone.contentrules - 1.0 Unreleased
+plone.contentrules - 1.0.5
 
     - Use the plone i18n domain for text found in metadirectives.py.
       [hannosch]
@@ -11,6 +11,3 @@ plone.contentrules - 1.0 Unreleased
       user-visible configuration. This closes
       http://dev.plone.org/plone/ticket/6886.
       [hannosch]
-
-    - Initial package structure.
-      [zopeskel]
