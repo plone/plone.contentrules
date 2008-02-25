@@ -3,9 +3,6 @@ from zope.interface import Interface
 from zope import schema
 from zope.configuration import fields as configuration_fields
 
-from plone.contentrules import PloneMessageFactory as _
-
-
 class IRuleElementDirective(Interface):
     """Directive which registers a new rule element.
     
@@ -13,38 +10,48 @@ class IRuleElementDirective(Interface):
     """
     
     name = schema.TextLine(
-        title=_(u"Name"),
-        description=_(u"A unique name for the element"),
+        title=u"Name",
+        description=u"A unique name for the element",
         required=True)
     
     title = schema.TextLine(
-        title=_(u"Title"),
-        description=_(u"A user-friendly title for the element"),
+        title=u"Title",
+        description=u"A user-friendly title for the element",
         required=True)
                            
     description = schema.Text(
-        title=_(u"Description"),
-        description=_(u"A helpful description of the element"),
+        title=u"Description",
+        description=u"A helpful description of the element",
         required=False)                       
                            
     for_ = configuration_fields.GlobalInterface(
-        title = _(u"Available for"),
-        description = _(u"The interface this component is available for"),
+        title = u"Available for",
+        description = u"The interface this element is available for",
         required = False)
     
     event = configuration_fields.GlobalInterface(
-        title = _(u"Event"),
-        description = _(u"The event this component is available for"),
+        title = u"Event",
+        description = u"The event this element is available for",
         required = False)
     
     addview = schema.TextLine(
-        title = _(u"Add view"),
-        description = _(u"Name of the add view"),
+        title = u"Add view",
+        description = u"Name of the add view",
         required = True)
     
     editview = schema.TextLine(
-        title = _(u"Edit view"),
-        description = _(u"Name of the edit view"),
+        title = u"Edit view",
+        description = u"Name of the edit view",
+        required = False)
+        
+    schema = configuration_fields.GlobalInterface(
+        title = u"Schema",
+        description = u"The schema interface for configuring the element",
+        required = False)
+        
+    factory = configuration_fields.GlobalObject(
+        title = u"Factory",
+        description = u"A callable which can create the element",
         required = False)
         
 class IRuleActionDirective(IRuleElementDirective):

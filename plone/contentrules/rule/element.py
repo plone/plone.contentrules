@@ -15,6 +15,8 @@ class RuleElement(object):
     description = u''
     for_ = Interface
     event = None
+    addview = None
+    editview = None
     schema = None
     factory = None
     

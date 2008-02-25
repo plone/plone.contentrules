@@ -61,6 +61,16 @@ class IRuleElement(Interface):
         title = u"Edit view",
         description = u"The name of the edit view",
         required = True)
+        
+    schema = configuration_fields.GlobalInterface(
+        title = u'Schema',
+        description = u'Schema interface for configuring the element',
+        required = False)
+        
+    factory = configuration_fields.GlobalInterface(
+        title = u'Factory',
+        description = u'Callable which creates an instance of the element',
+        required = False)
 
 class IRuleCondition(IRuleElement):
     """A condition of a rule
