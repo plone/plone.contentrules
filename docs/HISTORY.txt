@@ -2,6 +2,10 @@ Changelog for plone.contentrules
 
     (name of developer listed in brackets)
 
+plone.contentrules - 1.1.0 - April 20th 2008
+
+    - Unchanged from 1.1.0a1
+
 plone.contentrules - 1.1.0a1
 
     - Merge PLIP 204 - GenericSetup support. A contentrules.xml file can now
