@@ -2,6 +2,11 @@ Changelog for plone.contentrules
 
     (name of developer listed in brackets)
 
+plone.contentrules - 1.1.1 - unreleased
+
+    - Specify package dependencies.
+      [hannosch]
+
 plone.contentrules - 1.1.0 - April 20th 2008
 
     - Unchanged from 1.1.0a1

@@ -15,6 +15,7 @@ Apple's Automator. It is used by plone.app.contentrules to provide such
 functionality for Plone.
 """,
       classifiers=[
+        "Framework :: Plone",
         "Framework :: Zope2",
         "Framework :: Zope3",
         "License :: OSI Approved :: GNU General Public License (GPL)",
@@ -24,15 +25,26 @@ functionality for Plone.
       author='Markus Fuhrer, Martin Aspeli',
       author_email='plone-developers@lists.sourceforge.net',
       url='http://svn.plone.org/svn/plone/plone.contentrules',
-      license='LGPL',
+      license='GPL',
       packages=find_packages(exclude=['ez_setup']),
       namespace_packages=['plone'],
       include_package_data=True,
       zip_safe=False,
       install_requires=[
         'setuptools',
+        'ZODB3',
+        'zope.annotation',
+        'zope.component',
+        'zope.configuration',
+        'zope.i18nmessageid',
+        'zope.interface',
+        'zope.lifecycleevent',
+        'zope.schema',
+        'zope.security',
+        'zope.testing',
+        'zope.app.component',
+        'zope.app.container',
+        'zope.app.security',
+        'zope.app.testing',
       ],
-      entry_points="""
-      # -*- Entry points: -*-
-      """,
       )
