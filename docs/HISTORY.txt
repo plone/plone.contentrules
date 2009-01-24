@@ -4,6 +4,9 @@ Changelog for plone.contentrules
 
 plone.contentrules - 2.0 - unreleased
 
+    - Moved declaration of test dependencies into a test extra.
+      [hannosch]
+
     - Specify package dependencies.
       [hannosch]
 

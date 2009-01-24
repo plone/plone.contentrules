@@ -30,6 +30,14 @@ functionality for Plone.
       namespace_packages=['plone'],
       include_package_data=True,
       zip_safe=False,
+      extras_require=dict(
+          test=[
+            'zope.lifecycleevent',
+            'zope.security',
+            'zope.testing',
+            'zope.app.testing',
+          ]
+      ),
       install_requires=[
         'setuptools',
         'ZODB3',
@@ -38,13 +46,9 @@ functionality for Plone.
         'zope.configuration',
         'zope.i18nmessageid',
         'zope.interface',
-        'zope.lifecycleevent',
         'zope.schema',
-        'zope.security',
-        'zope.testing',
         'zope.app.component',
         'zope.app.container',
         'zope.app.security',
-        'zope.app.testing',
       ],
       )
