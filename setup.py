@@ -22,7 +22,7 @@ functionality for Plone.
         "Programming Language :: Python",
         ],
       keywords='',
-      author='Markus Fuhrer, Martin Aspeli',
+      author='Plone Foundation',
       author_email='plone-developers@lists.sourceforge.net',
       url='http://svn.plone.org/svn/plone/plone.contentrules',
       license='GPL',
