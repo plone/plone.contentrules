@@ -1,35 +1,31 @@
 import unittest
 
-import zope.annotation
-import zope.security
-import zope.app.security
-import zope.app.component
-import zope.app.container
-
-import plone.contentrules
-
-from zope.testing import doctest
-from zope.app.testing.placelesssetup import setUp, tearDown
+from zope.component.testing import PlacelessSetup as CAPlacelessSetup
 from zope.configuration.xmlconfig import XMLConfig
+from zope.container.testing import PlacelessSetup as ContainerPlacelessSetup
+from zope.testing import doctest
 
 optionflags = doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS
 
+class PlacelessSetup(CAPlacelessSetup, ContainerPlacelessSetup):
+
+    def setUp(self, doctesttest=None):
+        CAPlacelessSetup.setUp(self)
+        ContainerPlacelessSetup.setUp(self)
+
+ps = PlacelessSetup()
+
+
 def configurationSetUp(test):
-    setUp()
-    
-    XMLConfig('meta.zcml', zope.security)()
-    XMLConfig('meta.zcml', zope.app.security)()
-    XMLConfig('meta.zcml', zope.app.component)()
-    
-    XMLConfig('configure.zcml', zope.app.security)()
-    XMLConfig('configure.zcml', zope.app.container)()
-    XMLConfig('configure.zcml', zope.annotation)()
-    
+    ps.setUp()
+    import zope.component
+    XMLConfig('meta.zcml', zope.component)()
+
+    import plone.contentrules
     XMLConfig('configure.zcml', plone.contentrules)()
-    # XMLConfig('meta.zcml', plone.contentrules)()
 
 def configurationTearDown(test):
-    tearDown()
+    ps.tearDown()
 
 def test_suite():
     return unittest.TestSuite((

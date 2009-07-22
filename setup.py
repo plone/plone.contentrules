@@ -1,5 +1,4 @@
 from setuptools import setup, find_packages
-import sys, os
 
 version = '2.0'
 
@@ -33,9 +32,7 @@ functionality for Plone.
       extras_require=dict(
           test=[
             'zope.lifecycleevent',
-            'zope.security',
             'zope.testing',
-            'zope.app.testing',
           ]
       ),
       install_requires=[
@@ -43,12 +40,11 @@ functionality for Plone.
         'ZODB3',
         'zope.annotation',
         'zope.component',
+        'zope.componentvocabulary',
         'zope.configuration',
         'zope.i18nmessageid',
         'zope.interface',
         'zope.schema',
-        'zope.app.component',
         'zope.app.container',
-        'zope.app.security',
       ],
       )

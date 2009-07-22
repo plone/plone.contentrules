@@ -1,7 +1,7 @@
 from zope.schema.interfaces import IVocabularyFactory
 from zope.interface import classProvides
 
-from zope.app.component.vocabulary import UtilityVocabulary
+from zope.componentvocabulary.vocabulary import UtilityVocabulary
 from plone.contentrules.rule.interfaces import IRuleEventType
 
 class EventTypesVocabulary(UtilityVocabulary):

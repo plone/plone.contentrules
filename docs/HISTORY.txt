@@ -4,6 +4,9 @@ Changelog for plone.contentrules
 
 plone.contentrules - 2.0 - unreleased
 
+    - Cleaned up tests to rely on a minimal amount of packages.
+      [hannosch]
+
     - Clarified license and copyright.
       [hannosch]
 
