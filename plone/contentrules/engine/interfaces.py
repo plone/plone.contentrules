@@ -1,11 +1,11 @@
 from zope.interface import Interface, Attribute
 from zope import schema
 
-from zope.app.container.interfaces import IContained
-from zope.app.container.interfaces import IOrderedContainer
-from zope.app.container.interfaces import IContainerNamesContainer
+from zope.container.interfaces import IContained
+from zope.container.interfaces import IOrderedContainer
+from zope.container.interfaces import IContainerNamesContainer
 
-from zope.app.container.constraints import contains
+from zope.container.constraints import contains
 from zope.annotation.interfaces import IAttributeAnnotatable
 
 class StopRule(Exception):

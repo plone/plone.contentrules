@@ -4,6 +4,9 @@ Changelog for plone.contentrules
 
 plone.contentrules - 2.0 - unreleased
 
+    - Use `zope.container` instead of its older `zope.app` variant.
+      [hannosch]
+
     - Cleaned up tests to rely on a minimal amount of packages.
       [hannosch]
 

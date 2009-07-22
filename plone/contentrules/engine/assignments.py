@@ -4,8 +4,8 @@ from zope.interface import implements, implementer
 from zope.component import adapter, queryUtility
 
 from zope.annotation.interfaces import IAnnotations
-from zope.app.container.ordered import OrderedContainer
-from zope.app.container.contained import Contained
+from zope.container.ordered import OrderedContainer
+from zope.container.contained import Contained
 
 from plone.contentrules.engine.interfaces import IRuleStorage
 from plone.contentrules.engine.interfaces import IRuleAssignable

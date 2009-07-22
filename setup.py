@@ -42,9 +42,9 @@ functionality for Plone.
         'zope.component',
         'zope.componentvocabulary',
         'zope.configuration',
+        'zope.container',
         'zope.i18nmessageid',
         'zope.interface',
         'zope.schema',
-        'zope.app.container',
       ],
       )

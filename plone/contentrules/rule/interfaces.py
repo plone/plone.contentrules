@@ -5,7 +5,7 @@ __docformat__ = 'restructuredtext'
 from zope.interface import Interface
 from zope.interface.interfaces import IInterface
 
-from zope.app.container.interfaces import IContained
+from zope.container.interfaces import IContained
 
 from zope import schema
 from zope.configuration import fields as configuration_fields

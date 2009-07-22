@@ -373,8 +373,8 @@ have sensible names.
   >>> ruleStorage = RuleStorage()
   >>> provideUtility(provides=IRuleStorage, component=ruleStorage)
   
-  >>> from zope.app.container.interfaces import IOrderedContainer
-  >>> from zope.app.container.interfaces import IContainerNamesContainer
+  >>> from zope.container.interfaces import IOrderedContainer
+  >>> from zope.container.interfaces import IContainerNamesContainer
   
   >>> IOrderedContainer.providedBy(ruleStorage)
   True
@@ -386,7 +386,7 @@ have sensible names.
   
 Before a rule is saved, it has no name, and no parent.
 
-  >>> from zope.app.container.interfaces import IContained
+  >>> from zope.container.interfaces import IContained
   >>> IContained.providedBy(testRule)
   True
   >>> testRule.__name__ is None
