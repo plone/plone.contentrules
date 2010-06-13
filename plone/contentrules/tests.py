@@ -7,6 +7,7 @@ from zope.container.testing import PlacelessSetup as ContainerPlacelessSetup
 
 optionflags = doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS
 
+
 class PlacelessSetup(CAPlacelessSetup, ContainerPlacelessSetup):
 
     def setUp(self, doctesttest=None):
@@ -24,23 +25,21 @@ def configurationSetUp(test):
     import plone.contentrules
     XMLConfig('configure.zcml', plone.contentrules)()
 
+
 def configurationTearDown(test):
     ps.tearDown()
+
 
 def test_suite():
     return unittest.TestSuite((
         doctest.DocFileSuite(
-            'README.txt', 
-            setUp=configurationSetUp, 
+            'README.txt',
+            setUp=configurationSetUp,
             tearDown=configurationTearDown,
             optionflags=optionflags),
         doctest.DocFileSuite(
-            'zcml.txt', 
-            setUp=configurationSetUp, 
+            'zcml.txt',
+            setUp=configurationSetUp,
             tearDown=configurationTearDown,
             optionflags=optionflags),
         ))
-
-
-if __name__ == '__main__':
-    unittest.main(defaultTest='test_suite')

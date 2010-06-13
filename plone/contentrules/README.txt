@@ -1,8 +1,8 @@
-=============================
-  Plone ContentRules Engine
-=============================
+=========================
+Plone ContentRules Engine
+=========================
 
-plone.contentrules is a pure Zope 3 implementation of a content rules engine.
+plone.contentrules is a pure Zope implementation of a content rules engine.
 Content rules are managed by the user, and may be likened to email filter
 rules or Apple's Automator. A user creates a Rule, and composes a sequence
 of rule elements, specifically Conditions and Actions. Rules are assigned to
