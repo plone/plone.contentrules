@@ -1,9 +1,9 @@
+import doctest
 import unittest
 
 from zope.component.testing import PlacelessSetup as CAPlacelessSetup
 from zope.configuration.xmlconfig import XMLConfig
 from zope.container.testing import PlacelessSetup as ContainerPlacelessSetup
-from zope.testing import doctest
 
 optionflags = doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS
 
