@@ -4,6 +4,8 @@ Changelog
 2.0.1 - unreleased
 ------------------
 
+- Event types vocabulary is internationalized.
+  [thomasdesvenain]
 
 2.0 - 2010-07-18
 ----------------
