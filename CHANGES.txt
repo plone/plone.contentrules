@@ -6,6 +6,7 @@ Changelog
 
 - Event types vocabulary is internationalized.
   This closes https://dev.plone.org/plone/ticket/7059.
+  This closes https://dev.plone.org/plone/ticket/6902.
   [thomasdesvenain]
 
 2.0 - 2010-07-18
