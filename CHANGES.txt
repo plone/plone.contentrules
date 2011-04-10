@@ -4,6 +4,10 @@ Changelog
 2.0.2 - Unreleased
 ------------------
 
+- Add MANIFEST.in.
+  [WouterVH]
+
+
 2.0.1 - 2011-04-01
 ------------------
 
@@ -12,11 +16,13 @@ Changelog
   This closes http://dev.plone.org/plone/ticket/6902.
   [thomasdesvenain]
 
+
 2.0 - 2010-07-18
 ----------------
 
 - Update license to GPL version 2 only.
   [hannosch]
+
 
 2.0b1 - 2010-06-13
 ------------------
@@ -36,10 +42,12 @@ Changelog
 - Specify package dependencies.
   [hannosch]
 
+
 1.1.0 - 2008-04-20
 ------------------
 
 - Unchanged from 1.1.0a1
+
 
 1.1.0a1
 -------
@@ -47,6 +55,7 @@ Changelog
 - Merge PLIP 204 - GenericSetup support. A contentrules.xml file can now
   be used to import and export rule definitions and assignments.
   [optilude]
+
 
 1.0.5
 -----
