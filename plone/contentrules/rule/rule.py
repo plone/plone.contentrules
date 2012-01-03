@@ -12,16 +12,16 @@ class Rule(Persistent):
     """
 
     implements(IRule)
-    
+
     title = u''
     description = u''
     event = None
     enabled = True
     stop = False
-    
+
     __name__ = None
     __parent__ = None
-    
+
     def __init__(self):
         self.conditions = PersistentList()
         self.actions = PersistentList()
@@ -29,15 +29,15 @@ class Rule(Persistent):
 class RuleExecutable(object):
     """An adapter capable of executing a rule
     """
-    
+
     implements(IExecutable)
     adapts(Interface, IRule, Interface)
-    
+
     def __init__(self, context, rule, event):
         self.context = context
         self.rule = rule
         self.event = event
-    
+
     def __call__(self):
         for condition in self.rule.conditions:
             executable = getMultiAdapter((self.context, condition, self.event), IExecutable)

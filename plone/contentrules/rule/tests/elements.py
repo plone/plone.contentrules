@@ -12,7 +12,7 @@ class ITestCondition(Interface):
 class TestCondition(object):
     implements(ITestCondition, IRuleElementData)
     test = u""
-    
+
     summary = u"Test condition"
     element = u"test.condition"
 
@@ -22,6 +22,6 @@ class ITestAction(Interface):
 class TestAction(object):
     implements(ITestAction, IRuleElementData)
     test = u""
-    
+
     summary = u"Test action"
     element = u"test.action"

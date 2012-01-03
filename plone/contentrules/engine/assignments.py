@@ -15,23 +15,23 @@ from plone.contentrules.engine.interfaces import IRuleAssignmentManager
 from BTrees.OOBTree import OOBTree
 
 KEY = 'plone.contentrules.localassignments'
-    
+
 class RuleAssignment(Contained, Persistent):
     """An assignment of a rule to a context
     """
     implements(IRuleAssignment)
-    
+
     def __init__(self, ruleid, enabled=True, bubbles=False):
         super(RuleAssignment, self).__init__()
         self.__name__ = ruleid
         self.enabled = enabled
         self.bubbles = bubbles
-    
+
 class RuleAssignmentManager(OrderedContainer):
     """A context-specific container for rule assignments
     """
     implements(IRuleAssignmentManager)
-    
+
     def __init__(self):
         # XXX: This depends on implementation detail in OrderedContainer,
         # but it uses a PersistentDict, which sucks :-/
@@ -52,8 +52,8 @@ class RuleAssignmentManager(OrderedContainer):
 @adapter(IRuleAssignable)
 @implementer(IRuleAssignmentManager)
 def ruleAssignmentManagerAdapterFactory(context):
-    """When adapting an IRuleAssignable, get an IRuleAssignmentManager by 
-    finding one in the object's annotations. The container will be created 
+    """When adapting an IRuleAssignable, get an IRuleAssignmentManager by
+    finding one in the object's annotations. The container will be created
     if necessary.
     """
     annotations = IAnnotations(context)

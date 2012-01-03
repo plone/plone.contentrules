@@ -12,13 +12,13 @@ from plone.contentrules.rule.interfaces import IExecutable
 class RuleExecutor(object):
     """An object that can execute rules in its context.
     """
-    
+
     implements(IRuleExecutor)
     adapts(IRuleAssignable)
-    
+
     def __init__(self, context):
         self.context = context
-    
+
     def __call__(self, event, bubbled=False, rule_filter=None):
         assignments = IRuleAssignmentManager(self.context)
         for rule in assignments.getRules(event, bubbled=bubbled):

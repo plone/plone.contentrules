@@ -1,12 +1,12 @@
 <configure xmlns="http://namespaces.zope.org/zope">
-    
+
     <adapter
-      factory=".rule.RuleExecutable" 
+      factory=".rule.RuleExecutable"
       />
-    
-    <utility 
-      component=".eventvocab.EventTypesVocabulary" 
-      name="plone.contentrules.events" 
+
+    <utility
+      component=".eventvocab.EventTypesVocabulary"
+      name="plone.contentrules.events"
       />
-            
+
 </configure>

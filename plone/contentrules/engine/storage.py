@@ -8,7 +8,7 @@ from BTrees.OOBTree import OOBTree
 class RuleStorage(OrderedContainer):
     """A container for rules.
     """
-    
+
     implements(IRuleStorage)
 
     active = True
