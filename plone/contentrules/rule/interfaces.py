@@ -96,15 +96,18 @@ class IRuleConfiguration(Interface):
     """
 
     title = schema.TextLine(title = _(u'Title'),
-                            description = _(u'The title of the rule'),
+                            description = _('description_contentrule_title',
+                                            default=u'Please set a descriptive title for the rule.'),
                             required = True)
 
     description = schema.Text(title = _(u'Description'),
-                              description = _(u'A summary of the rule'),
+                              description = _('contentrules_description_description',
+                                              default=u'Enter a short description of the rule and its purpose.'),
                               required = False)
 
     event = schema.Choice(title = _(u'Triggering event'),
-                          description = _(u'The event that can trigger this rule'),
+                          description = _('contentrules_description_trigger',
+                                          default=u'The rule will execute when the following event occurs.'),
                           required = True,
                           vocabulary="plone.contentrules.events")
 

@@ -4,6 +4,9 @@ Changelog
 2.0.2 - Unreleased
 ------------------
 
+- Field descriptions on add form are consistent with the ones in edit form.
+  [thomasdesvenain]
+
 - Add MANIFEST.in.
   [WouterVH]
 
