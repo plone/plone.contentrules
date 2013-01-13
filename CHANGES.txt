@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.0.2 - Unreleased
+2.0.2 (2013-01-13)
 ------------------
 
 - Field descriptions on add form are consistent with the ones in edit form.
