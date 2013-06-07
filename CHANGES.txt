@@ -4,7 +4,8 @@ Changelog
 2.0.3 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fix: Plone 4.3 sites were broken by "Content added" content rules created before 4.3.
+  [thomasdesvenain]
 
 
 2.0.2 (2013-01-13)
