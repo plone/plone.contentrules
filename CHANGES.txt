@@ -4,7 +4,9 @@ Changelog
 2.0.4 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- If a rule is 'recursive', actions executed by this rule
+  can recursively trigger other rules.
+  [thomasdesvenain]
 
 
 2.0.3 (2013-06-13)
