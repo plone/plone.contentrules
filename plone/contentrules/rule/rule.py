@@ -18,7 +18,7 @@ class Rule(Persistent):
     event = None
     enabled = True
     stop = False
-    recursive = False
+    cascading = False
 
     __name__ = None
     __parent__ = None

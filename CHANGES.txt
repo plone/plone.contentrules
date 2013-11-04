@@ -4,7 +4,7 @@ Changelog
 2.0.4 (unreleased)
 ------------------
 
-- If a rule is 'recursive', actions executed by this rule
+- If a rule is 'cascading', actions executed by this rule
   can recursively trigger other rules.
   [thomasdesvenain]
 

@@ -119,7 +119,7 @@ class IRuleConfiguration(Interface):
                        description = _(u"Whether or not execution of further rules should stop after this rule is executed"),
                        default = False)
 
-    recursive = schema.Bool(title = _(u"Recursive rule"),
+    cascading = schema.Bool(title = _(u"Cascading rule"),
                        description = _(u"Whether or not other rules should be triggered by the actions launched by this rule. Activate this only if you are sure this won't create infinite loops."),
                        default = False)
 
