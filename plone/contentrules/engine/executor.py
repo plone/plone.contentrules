@@ -30,11 +30,16 @@ class RuleExecutor(object):
 
                 # we store cascading option in the filter. if true, this will allow
                 # rules to be executed because of the actions ran by this rule.
-                cascade_before = rule_filter.cascade
-                rule_filter.cascade = rule.cascading
+                if rule_filter is not None:
+                    cascade_before = getattr(rule_filter, 'cascade', False)
+                    rule_filter.cascade = rule.cascading
+
                 executable = getMultiAdapter((self.context, rule, event), IExecutable)
                 executable()
-                rule_filter.cascade = cascade_before
+               
+                if rule_filter is not None:
+                    rule_filter.cascade = cascade_before
+
                 if rule.stop:
                     # stop rule execution if 'Stop rules after' option has been selected
                     raise StopRule(rule)
