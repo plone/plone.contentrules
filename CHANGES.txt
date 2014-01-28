@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.0.4 (unreleased)
+2.0.4 (2014-01-27)
 ------------------
 
 - If a rule is 'cascading', actions executed by this rule
