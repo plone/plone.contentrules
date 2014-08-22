@@ -36,7 +36,7 @@ class RuleExecutor(object):
 
                 executable = getMultiAdapter((self.context, rule, event), IExecutable)
                 executable()
-               
+
                 if rule_filter is not None:
                     rule_filter.cascade = cascade_before
 

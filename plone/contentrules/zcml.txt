@@ -7,7 +7,7 @@ This package registers two new ZCML directives. These are:
     <plone:registerCondition /> -- used to register a new type of condition
     <plone:registerAction /> -- used to register a new type of action
 
-We have created a dummy condition and a dummy action in 
+We have created a dummy condition and a dummy action in
 plone.contentrules.rule.tests.elements. We haven't bothered to register an
 addview or an edit view, but in real life we would need to do so using the
 usual <browser:page /> directives or similar.
@@ -18,7 +18,7 @@ Here is how we would register these in ZCML:
     ... <configure package="plone.contentrules"
     ...            xmlns="http://namespaces.zope.org/zope"
     ...            xmlns:plone="http://namespaces.plone.org/plone">
-    ... 
+    ...
     ...     <plone:ruleCondition
     ...         name="test.condition"
     ...         title="Test condition"
@@ -30,7 +30,7 @@ Here is how we would register these in ZCML:
     ...         schema=".rule.tests.elements.ITestCondition"
     ...         factory=".rule.tests.elements.TestCondition"
     ...         />
-    ...         
+    ...
     ...     <plone:ruleAction
     ...         name="test.action"
     ...         title="Test action"
@@ -63,7 +63,7 @@ inspect conditions and actions in rules.
 
     >>> from plone.contentrules.rule.interfaces import IRuleCondition
     >>> from plone.contentrules.rule.interfaces import IRuleAction
-    
+
     >>> from zope.component import getUtility
     >>> from zope.component.interfaces import IObjectEvent
     >>> from plone.contentrules.rule.tests import elements
