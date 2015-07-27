@@ -33,12 +33,12 @@ def configurationTearDown(test):
 def test_suite():
     return unittest.TestSuite((
         doctest.DocFileSuite(
-            'README.txt',
+            'README.rst',
             setUp=configurationSetUp,
             tearDown=configurationTearDown,
             optionflags=optionflags),
         doctest.DocFileSuite(
-            'zcml.txt',
+            'zcml.rst',
             setUp=configurationSetUp,
             tearDown=configurationTearDown,
             optionflags=optionflags),
