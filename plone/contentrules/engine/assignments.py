@@ -16,6 +16,12 @@ from plone.contentrules.engine.interfaces import IRuleAssignmentManager
 
 from BTrees.OOBTree import OOBTree
 
+try:
+    from plone.protect.auto import safeWrite
+except ImportError:
+    def safeWrite(*args):
+        pass
+
 
 def check_rules_with_dotted_name_moved(rule):
     """Migrate on-the-fly added event dotted name
@@ -85,6 +91,10 @@ def ruleAssignmentManagerAdapterFactory(context):
     annotations = IAnnotations(context)
     manager = annotations.get(KEY, None)
     if manager is None:
-        manager = annotations[KEY] = RuleAssignmentManager()
+        annotations[KEY] = RuleAssignmentManager()
+        manager = annotations[KEY]
+        # protect both context and its annotations from a write on read error
+        safeWrite(context)
+        safeWrite(context.__annotations__)
 
     return manager
