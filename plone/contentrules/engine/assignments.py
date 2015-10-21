@@ -14,6 +14,8 @@ from plone.contentrules.engine.interfaces import IRuleAssignable
 from plone.contentrules.engine.interfaces import IRuleAssignment
 from plone.contentrules.engine.interfaces import IRuleAssignmentManager
 
+from plone.protect.auto import safeWrite
+
 from BTrees.OOBTree import OOBTree
 
 
@@ -85,6 +87,10 @@ def ruleAssignmentManagerAdapterFactory(context):
     annotations = IAnnotations(context)
     manager = annotations.get(KEY, None)
     if manager is None:
-        manager = annotations[KEY] = RuleAssignmentManager()
+        annotations[KEY] = RuleAssignmentManager()
+        manager = annotations[KEY]
+        # protect both context and its annotations from a write on read error
+        safeWrite(context)
+        safeWrite(context.__annotations__)
 
     return manager
