@@ -14,9 +14,13 @@ from plone.contentrules.engine.interfaces import IRuleAssignable
 from plone.contentrules.engine.interfaces import IRuleAssignment
 from plone.contentrules.engine.interfaces import IRuleAssignmentManager
 
-from plone.protect.auto import safeWrite
-
 from BTrees.OOBTree import OOBTree
+
+try:
+    from plone.protect.auto import safeWrite
+except ImportError:
+    def safeWrite(*args):
+        pass
 
 
 def check_rules_with_dotted_name_moved(rule):
