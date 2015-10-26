@@ -4,8 +4,8 @@ Changelog
 2.0.5 (unreleased)
 ------------------
 
-- Nothing changed yet.
-
+- CSRF fix: safe write on read.
+  [gforcada]
 
 2.0.4 (2014-01-27)
 ------------------
