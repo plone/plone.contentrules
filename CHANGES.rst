@@ -12,8 +12,6 @@ Fixes:
 
 - *add item here*
 
-- CSRF fix: safe write on read.
-  [gforcada]
 
 2.0.4 (2014-01-27)
 ------------------
