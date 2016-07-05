@@ -1,15 +1,14 @@
-from zope.interface import implements, Interface
+from zope.interface import implementer, Interface
 
 from plone.contentrules.rule.interfaces import IRuleElement, IRuleCondition, IRuleAction
 
+@implementer(IRuleElement)
 class RuleElement(object):
     """A rule element.
 
     Ordinarily, rule elements will be created via ZCML directives, which will
     register them as utilities.
     """
-
-    implements(IRuleElement)
 
     title = u''
     description = u''
@@ -20,6 +19,7 @@ class RuleElement(object):
     schema = None
     factory = None
 
+@implementer(IRuleCondition)
 class RuleCondition(RuleElement):
     """A rule condition.
 
@@ -27,8 +27,8 @@ class RuleCondition(RuleElement):
     specific interface to enable the UI to differentate between different types
     of elements.
     """
-    implements(IRuleCondition)
 
+@implementer(IRuleAction)
 class RuleAction(RuleElement):
     """A rule action.
 
@@ -36,4 +36,3 @@ class RuleAction(RuleElement):
     specific interface to enable the UI to differentate between different types
     of elements.
     """
-    implements(IRuleAction)

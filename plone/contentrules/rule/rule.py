@@ -1,17 +1,16 @@
 from persistent import Persistent
 from persistent.list import PersistentList
 
-from zope.interface import implements, Interface
+from zope.interface import implementer, Interface
 from zope.component import adapts, getMultiAdapter
 
 from plone.contentrules.rule.interfaces import IRule
 from plone.contentrules.rule.interfaces import IExecutable
 
+@implementer(IRule)
 class Rule(Persistent):
     """A rule.
     """
-
-    implements(IRule)
 
     title = u''
     description = u''
@@ -27,11 +26,10 @@ class Rule(Persistent):
         self.conditions = PersistentList()
         self.actions = PersistentList()
 
+@implementer(IExecutable)
 class RuleExecutable(object):
     """An adapter capable of executing a rule
     """
-
-    implements(IExecutable)
     adapts(Interface, IRule, Interface)
 
     def __init__(self, context, rule, event):

@@ -1,4 +1,4 @@
-from zope.interface import implements
+from zope.interface import implementer
 from zope.component import adapts, getMultiAdapter
 
 from plone.contentrules.engine.interfaces import IRuleExecutor
@@ -9,11 +9,10 @@ from plone.contentrules.engine.interfaces import StopRule
 
 from plone.contentrules.rule.interfaces import IExecutable
 
+@implementer(IRuleExecutor)
 class RuleExecutor(object):
     """An object that can execute rules in its context.
     """
-
-    implements(IRuleExecutor)
     adapts(IRuleAssignable)
 
     def __init__(self, context):

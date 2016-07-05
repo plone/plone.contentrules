@@ -1,15 +1,14 @@
-from zope.interface import implements
+from zope.interface import implementer
 from zope.container.ordered import OrderedContainer
 
 from plone.contentrules.engine.interfaces import IRuleStorage
 
 from BTrees.OOBTree import OOBTree
 
+@implementer(IRuleStorage)
 class RuleStorage(OrderedContainer):
     """A container for rules.
     """
-
-    implements(IRuleStorage)
 
     active = True
 

@@ -1,7 +1,7 @@
 """Dummies used in ZCML tests
 """
 
-from zope.interface import Interface, implements
+from zope.interface import Interface, implementer
 from zope import schema
 
 from plone.contentrules.rule.interfaces import IRuleElementData
@@ -9,8 +9,8 @@ from plone.contentrules.rule.interfaces import IRuleElementData
 class ITestCondition(Interface):
     test = schema.TextLine(title=u"Test property")
 
+@implementer(ITestCondition, IRuleElementData)
 class TestCondition(object):
-    implements(ITestCondition, IRuleElementData)
     test = u""
 
     summary = u"Test condition"
@@ -19,8 +19,8 @@ class TestCondition(object):
 class ITestAction(Interface):
     test = schema.TextLine(title=u"Test property")
 
+@implementer(ITestAction, IRuleElementData)
 class TestAction(object):
-    implements(ITestAction, IRuleElementData)
     test = u""
 
     summary = u"Test action"

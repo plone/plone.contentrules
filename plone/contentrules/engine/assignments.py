@@ -2,7 +2,7 @@ from persistent import Persistent
 
 from OFS.Uninstalled import BrokenClass
 from ZODB.broken import PersistentBroken
-from zope.interface import implements, implementer
+from zope.interface import implementer, implementer
 from zope.component import adapter, queryUtility
 from zope.annotation.interfaces import IAnnotations
 from zope.container.ordered import OrderedContainer
@@ -34,10 +34,10 @@ def check_rules_with_dotted_name_moved(rule):
 
 KEY = 'plone.contentrules.localassignments'
 
+@implementer(IRuleAssignment)
 class RuleAssignment(Contained, Persistent):
     """An assignment of a rule to a context
     """
-    implements(IRuleAssignment)
 
     def __init__(self, ruleid, enabled=True, bubbles=False):
         super(RuleAssignment, self).__init__()
@@ -45,10 +45,10 @@ class RuleAssignment(Contained, Persistent):
         self.enabled = enabled
         self.bubbles = bubbles
 
+@implementer(IRuleAssignmentManager)
 class RuleAssignmentManager(OrderedContainer):
     """A context-specific container for rule assignments
     """
-    implements(IRuleAssignmentManager)
 
     def __init__(self):
         # XXX: This depends on implementation detail in OrderedContainer,
