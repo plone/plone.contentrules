@@ -1,4 +1,4 @@
-from zope.interface import Interface, classProvides
+from zope.interface import Interface, provider
 from zope.interface.interfaces import IInterface
 import zope.component
 from zope.schema.interfaces import IVocabularyFactory
@@ -12,13 +12,13 @@ from plone.contentrules.rule.interfaces import IRuleEventType
 
 _ = MessageFactory('plone')
 
+@provider(IVocabularyFactory)
 class EventTypesVocabulary(UtilityVocabulary):
     """A vocabulary for event interfaces that can be selected for the 'event'
     attribute of an IRule.
     An internationalized version of UtilityVocabulary
     """
     interface = IRuleEventType
-    classProvides(IVocabularyFactory)
 
     def __init__(self, context, **kw):
         if kw:
