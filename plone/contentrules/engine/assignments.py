@@ -1,6 +1,5 @@
 from persistent import Persistent
 
-from OFS.Uninstalled import BrokenClass
 from ZODB.broken import PersistentBroken
 from zope.interface import implementer, implementer
 from zope.component import adapter, queryUtility
@@ -16,6 +15,7 @@ from plone.contentrules.engine.interfaces import IRuleAssignmentManager
 
 from BTrees.OOBTree import OOBTree
 
+
 try:
     from plone.protect.auto import safeWrite
 except ImportError:
@@ -28,11 +28,21 @@ def check_rules_with_dotted_name_moved(rule):
     if Plone has been migrated from any release to 4.3 release.
     Avoids any upgrade to fail when setup profile is re-imported.
     """
-    if PersistentBroken in rule.event.__bases__ or BrokenClass in rule.event.__bases__:
+    # This function is not tested, OFS requirement is not in setup.py
+    # As it currently blocks python3 porting we decided to ignore it
+    # for now.
+    try:
+        from OFS.Uninstalled import BrokenClass
+    except ImportError:
+        return
+    if (PersistentBroken in rule.event.__bases__ or
+            BrokenClass in rule.event.__bases__):
         if rule.event.__name__ == 'IObjectAddedEvent':
             rule.event = IObjectAddedEvent
 
+
 KEY = 'plone.contentrules.localassignments'
+
 
 @implementer(IRuleAssignment)
 class RuleAssignment(Contained, Persistent):

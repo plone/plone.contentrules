@@ -46,7 +46,10 @@ Here is how we would register these in ZCML:
     ... """
 
     >>> from zope.configuration.xmlconfig import xmlconfig
-    >>> from StringIO import StringIO
+    >>> try:
+    ...     from StringIO import StringIO
+    ... except ImportError:
+    ...     from io import StringIO
 
 First, we need to make sure the ZCML directives are defined:
 

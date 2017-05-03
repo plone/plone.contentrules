@@ -30,7 +30,7 @@ First, we create some rule elements.
 
 Lets start with some basic imports:
 
-  >>> from zope.interface import Interface, implements
+  >>> from zope.interface import Interface, implementer
   >>> from zope.component import adapts
   >>> from zope.component import getUtility, getAllUtilitiesRegisteredFor
   >>> from zope import schema
@@ -56,8 +56,8 @@ and summary properties come from IRuleElementData and are used by the
 user interface to discover the edit view and present a title and summery
 to the user:
 
-  >>> class MoveToFolderAction(Persistent):
-  ...     implements(IMoveToFolderAction, IRuleElementData)
+  >>> @implementer((IMoveToFolderAction, IRuleElementData))
+  ... class MoveToFolderAction(Persistent):
   ...     targetFolder = ''
   ...     element = "test.moveToFolder"
   ...     @property
@@ -71,15 +71,15 @@ adaptable to IExecutable. This should be a multi-adapter from
   >>> from plone.contentrules.rule.interfaces import IExecutable
   >>> from zope.component.interfaces import IObjectEvent
 
-  >>> class MoveToFolderExecutor(object):
-  ...     implements(IExecutable)
+  >>> @implementer(IExecutable)
+  ... class MoveToFolderExecutor(object):
   ...     adapts(Interface, IMoveToFolderAction, IObjectEvent)
   ...     def __init__(self, context, element, event):
   ...         self.context = context
   ...         self.element = element
   ...         self.event = event
   ...     def __call__(self):
-  ...         print "Tried to execute MoveToFolderExecutor, but not implemented"
+  ...         print("Tried to execute MoveToFolderExecutor, but not implemented")
   ...         return True
 
   >>> provideAdapter(MoveToFolderExecutor)
@@ -127,8 +127,8 @@ Again, we have to define an interface for the logger action:
 
 A factory class holding configuration data:
 
-  >>> class LoggerAction(Persistent):
-  ...     implements(ILoggerAction, IRuleElementData)
+  >>> @implementer((ILoggerAction, IRuleElementData))
+  ... class LoggerAction(Persistent):
   ...     loggingLevel = ''
   ...     targetLogger = ''
   ...     message = ''
@@ -138,8 +138,8 @@ A factory class holding configuration data:
 As well as the executor that does the actual logging, capable of being adapted
 to IExecutable. In this case, it will adapt any context and any event.
 
-  >>> class LoggerActionExecutor(object):
-  ...     implements(IExecutable)
+  >>> @implementer(IExecutable)
+  ... class LoggerActionExecutor(object):
   ...     adapts(Interface, ILoggerAction, Interface)
   ...
   ...     def __init__(self, context, element, event):
@@ -182,16 +182,16 @@ a given interface.
   >>> class IInterfaceCondition(Interface):
   ...     iface = Attribute(u'the interface')
 
-  >>> class InterfaceCondition(object):
-  ...     implements (IInterfaceCondition, IRuleElementData)
+  >>> @implementer((IInterfaceCondition, IRuleElementData))
+  ... class InterfaceCondition(object):
   ...     iface = None
   ...     element = "test.interface"
   ...     @property
   ...     def summary(self):
   ...         return "Check for interface " + self.iface.__identifier__
 
-  >>> class InterfaceConditionExecutor(object):
-  ...     implements(IExecutable)
+  >>> @implementer(IExecutable)
+  ... class InterfaceConditionExecutor(object):
   ...     adapts(Interface, IInterfaceCondition, Interface)
   ...
   ...     def __init__(self, context, element, event):
@@ -226,13 +226,13 @@ present:
   >>> class IHaltExecutionAction(Interface):
   ...     pass
 
-  >>> class HaltExecutionAction(Persistent):
-  ...     implements (IHaltExecutionAction, IRuleElementData)
+  >>> @implementer((IHaltExecutionAction, IRuleElementData))
+  ... class HaltExecutionAction(Persistent):
   ...     element = "test.halt"
   ...     summary = "Halt!"
 
-  >>> class HaltExecutionExecutor(object):
-  ...     implements(IExecutable)
+  >>> @implementer(IExecutable)
+  ... class HaltExecutionExecutor(object):
   ...     adapts(Interface, IHaltExecutionAction, Interface)
   ...     # Above: the second "Interface" causes this
   ...     # element to be available for every event
@@ -241,7 +241,7 @@ present:
   ...         self.element = element
   ...         self.event = event
   ...     def __call__(self):
-  ...         print "Rule Execution aborted at HaltAction"
+  ...         print("Rule Execution aborted at HaltAction")
   ...         return False  # False = Stop Execution! This is the payload.
 
   >>> provideAdapter(HaltExecutionExecutor)
@@ -273,9 +273,9 @@ itself implies IAttributeAnnotatable.
   >>> from plone.contentrules.engine.interfaces import IRuleAssignable
   >>> class IMyContent(IRuleAssignable):
   ...     pass
-  >>> class MyContent(object):
-  ...     implements(IMyContent)
-
+  >>> @implementer(IMyContent)
+  ... class MyContent(object):
+  ...     pass
   >>> context = MyContent()
 
   >>> from plone.contentrules.engine import utils
@@ -397,8 +397,8 @@ Before a rule is saved, it has no name, and no parent.
 After being saved, it will be given a name and parentage.
 
   >>> ruleStorage[u'testRule'] = testRule
-  >>> testRule.__name__
-  u'testRule'
+  >>> testRule.__name__ == 'testRule'
+  True 
   >>> testRule.__parent__ is ruleStorage
   True
 
@@ -459,8 +459,9 @@ higher up. Rules that are assigned not to bubble will not be executed.
 
 Now consider what would happen if the interface condition failed:
 
-  >>> class OtherContent(object):
-  ...     implements(IRuleAssignable)
+  >>> @implementer(IRuleAssignable)
+  ... class OtherContent(object):
+  ...     pass
   >>> otherContext = OtherContent()
 
   >>> otherManager = IRuleAssignmentManager(otherContext)
@@ -522,10 +523,11 @@ An element for IObjectCreatedEvent:
 
   >>> class IObjectCreatedSpecificAction(Interface):
   ...     pass
-  >>> class ObjectCreatedSpecificAction(Persistent):
-  ...     implements (IObjectCreatedSpecificAction)
-  >>> class ObjectCreatedExecutor(object):
-  ...     implements(IExecutable)
+  >>> @implementer(IObjectCreatedSpecificAction)
+  ... class ObjectCreatedSpecificAction(Persistent):
+  ...     pass
+  >>> @implementer(IExecutable)
+  ... class ObjectCreatedExecutor(object):
   ...     adapts(Interface, IObjectCreatedSpecificAction, IObjectCreatedEvent) #!
   ...     def __init__(self, context, element, event):
   ...         self.context = context
@@ -552,10 +554,11 @@ An element for IObjectCopiedEvent:
 
   >>> class IObjectCopiedSpecificAction(Interface):
   ...     pass
-  >>> class ObjectCopiedSpecificAction(Persistent):
-  ...     implements (IObjectCopiedSpecificAction)
-  >>> class ObjectCopiedExecutor(object):
-  ...     implements(IExecutable)
+  >>> @implementer(IObjectCopiedSpecificAction)
+  ... class ObjectCopiedSpecificAction(Persistent):
+  ...     pass
+  >>> @implementer(IExecutable)
+  ... class ObjectCopiedExecutor(object):
   ...     adapts(Interface, IObjectCopiedSpecificAction, IObjectCopiedEvent) #!
   ...     def __init__(self, context, element, event):
   ...         self.context = context
@@ -579,15 +582,15 @@ An element for IObjectCopiedEvent:
 
 All elements so far, applicable for object events:
 
-  >>> map(lambda x: x.title, utils.allAvailableActions(IObjectEvent))
+  >>> list(map(lambda x: x.title, utils.allAvailableActions(IObjectEvent)))
   ['Move To Folder', 'Log Event', 'Halt Rule Execution']
 
 For a more specific event, we may get more elements (i.e. those that also
 apply to more general events):
 
-  >>> map(lambda x: x.title, utils.allAvailableActions(IObjectCopiedEvent))
+  >>> list(map(lambda x: x.title, utils.allAvailableActions(IObjectCopiedEvent)))
   ['Move To Folder', 'Log Event', 'Halt Rule Execution', 'Object Created specific action', 'Object Copied Specific Action']
-  >>> map(lambda x: x.title, utils.allAvailableActions(IObjectCreatedEvent))
+  >>> list(map(lambda x: x.title, utils.allAvailableActions(IObjectCreatedEvent)))
   ['Move To Folder', 'Log Event', 'Halt Rule Execution', 'Object Created specific action']
 
 Filtering for specific events:
@@ -595,11 +598,13 @@ Filtering for specific events:
   >>> from zope.lifecycleevent.interfaces import IObjectCreatedEvent, IObjectCopiedEvent
   >>> newContext = MyContent()
 
-  >>> sorted([a.title for a in utils.getAvailableActions(context, IObjectEvent)])
+  >>> list(sorted([a.title for a in utils.getAvailableActions(context, IObjectEvent)]))
   ['Halt Rule Execution', 'Log Event', 'Move To Folder']
 
-  >>> sorted([a.title for a in utils.getAvailableActions(context, IObjectCreatedEvent)])
+  >>> list(sorted([a.title for a in utils.getAvailableActions(
+  ...     context, IObjectCreatedEvent)]))
   ['Halt Rule Execution', 'Log Event', 'Move To Folder', 'Object Created specific action']
 
-  >>> sorted([a.title for a in utils.getAvailableActions(context, IObjectCopiedEvent)])
+  >>> list(sorted([a.title for a in utils.getAvailableActions(
+  ...     context, IObjectCopiedEvent)]))
   ['Halt Rule Execution', 'Log Event', 'Move To Folder', 'Object Copied Specific Action', 'Object Created specific action']
