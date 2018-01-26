@@ -1,16 +1,18 @@
+# -*- coding: utf-8 -*-
+from plone.contentrules.rule.interfaces import IRuleEventType
+from zope.componentvocabulary.vocabulary import UtilityVocabulary
+from zope.i18nmessageid import MessageFactory
 from zope.interface import Interface, provider
 from zope.interface.interfaces import IInterface
-import zope.component
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleTerm
-from zope.i18nmessageid import MessageFactory
 
-from zope.componentvocabulary.vocabulary import UtilityVocabulary
-
-from plone.contentrules.rule.interfaces import IRuleEventType
+import six
+import zope.component
 
 
 _ = MessageFactory('plone')
+
 
 @provider(IVocabularyFactory)
 class EventTypesVocabulary(UtilityVocabulary):
@@ -24,7 +26,7 @@ class EventTypesVocabulary(UtilityVocabulary):
         if kw:
             self.nameOnly = bool(kw.get('nameOnly', False))
             interface = kw.get('interface', Interface)
-            if isinstance(interface, (str, unicode)):
+            if isinstance(interface, (six.string_types, six.text_type)):
                 interface = zope.component.getUtility(IInterface, interface)
             self.interface = interface
 
