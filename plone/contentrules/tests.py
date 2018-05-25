@@ -1,4 +1,6 @@
 import doctest
+import re
+import six
 import unittest
 
 from zope.component.testing import PlacelessSetup as CAPlacelessSetup
@@ -6,6 +8,14 @@ from zope.configuration.xmlconfig import XMLConfig
 from zope.container.testing import PlacelessSetup as ContainerPlacelessSetup
 
 optionflags = doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS
+
+
+class Py23DocChecker(doctest.OutputChecker):
+
+    def check_output(self, want, got, optionflags):
+        if not six.PY2:
+            want = re.sub("u'(.*?)'", "'\\1'", want)
+        return doctest.OutputChecker.check_output(self, want, got, optionflags)
 
 
 class PlacelessSetup(CAPlacelessSetup, ContainerPlacelessSetup):
@@ -36,10 +46,14 @@ def test_suite():
             'README.rst',
             setUp=configurationSetUp,
             tearDown=configurationTearDown,
-            optionflags=optionflags),
+            optionflags=optionflags,
+            checker=Py23DocChecker(),
+            ),
         doctest.DocFileSuite(
             'zcml.rst',
             setUp=configurationSetUp,
             tearDown=configurationTearDown,
-            optionflags=optionflags),
+            optionflags=optionflags,
+            checker=Py23DocChecker(),
+            ),
         ))
