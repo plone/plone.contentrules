@@ -4,14 +4,6 @@ Changelog
 2.0.8 (unreleased)
 ------------------
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
 Bug fixes:
 
 - Fix tests in py3.
