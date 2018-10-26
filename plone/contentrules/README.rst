@@ -307,7 +307,7 @@ instance of this rule element.
   >>> configuredAction = MoveToFolderAction()
   >>> configuredAction.targetFolder = "/foo"
   >>> configuredAction
-  <MoveToFolderAction object at ...>
+  <builtins.MoveToFolderAction object at ...>
 
 The element, once created, now needs to be saved as part of a rule.
 
@@ -399,7 +399,7 @@ After being saved, it will be given a name and parentage.
 
   >>> ruleStorage[u'testRule'] = testRule
   >>> testRule.__name__
-  u'testRule'
+  'testRule'
   >>> testRule.__parent__ is ruleStorage
   True
 

@@ -71,17 +71,17 @@ inspect conditions and actions in rules.
 
     >>> condition = getUtility(IRuleCondition, name=u"test.condition")
     >>> condition.title
-    u'Test condition'
+    'Test condition'
     >>> condition.description
-    u'A test condition'
+    'A test condition'
     >>> condition.for_ == None
     True
     >>> condition.event == IObjectEvent
     True
     >>> condition.addview
-    u'test.condition'
+    'test.condition'
     >>> condition.editview
-    u'edit'
+    'edit'
     >>> condition.schema == elements.ITestCondition
     True
     >>> condition.factory == elements.TestCondition
@@ -89,17 +89,17 @@ inspect conditions and actions in rules.
 
     >>> action = getUtility(IRuleAction, name=u"test.action")
     >>> action.title
-    u'Test action'
+    'Test action'
     >>> action.description
-    u'A test action'
+    'A test action'
     >>> action.for_ == None
     True
     >>> action.event == IObjectEvent
     True
     >>> action.addview
-    u'test.action'
+    'test.action'
     >>> action.editview
-    u'edit'
+    'edit'
     >>> action.schema == elements.ITestAction
     True
     >>> action.factory == elements.TestAction

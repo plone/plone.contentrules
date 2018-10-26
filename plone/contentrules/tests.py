@@ -13,8 +13,9 @@ optionflags = doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS
 class Py23DocChecker(doctest.OutputChecker):
 
     def check_output(self, want, got, optionflags):
-        if not six.PY2:
-            want = re.sub("u'(.*?)'", "'\\1'", want)
+        if six.PY2:
+            got = re.sub("u'(.*?)'", "'\\1'", got)
+            want = re.sub('<builtins.MoveToFolderAction ', '<MoveToFolderAction ', want)
         return doctest.OutputChecker.check_output(self, want, got, optionflags)
 
 
