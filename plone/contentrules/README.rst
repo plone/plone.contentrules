@@ -306,8 +306,8 @@ instance of this rule element.
 
   >>> configuredAction = MoveToFolderAction()
   >>> configuredAction.targetFolder = "/foo"
-  >>> configuredAction
-  <builtins.MoveToFolderAction object at ...>
+  >>> configuredAction.__class__.__name__
+  'MoveToFolderAction'
 
 The element, once created, now needs to be saved as part of a rule.
 
