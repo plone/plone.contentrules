@@ -14,7 +14,8 @@ New features:
 
 Bug fixes:
 
-- *add item here*
+- Fix tests to not rely on a specific `__repr__` of MoveToFolderAction and make py3 the default in test-output.
+  [pbauer]
 
 
 2.0.8 (2018-09-27)
