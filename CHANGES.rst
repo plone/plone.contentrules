@@ -4,14 +4,6 @@ Changelog
 2.0.9 (unreleased)
 ------------------
 
-Breaking changes:
-
-- *add item here*
-
-New features:
-
-- *add item here*
-
 Bug fixes:
 
 - Fix tests to not rely on a specific `__repr__` of MoveToFolderAction and make py3 the default in test-output.
