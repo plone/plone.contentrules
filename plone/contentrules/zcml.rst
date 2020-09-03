@@ -24,7 +24,7 @@ Here is how we would register these in ZCML:
     ...         title="Test condition"
     ...         description="A test condition"
     ...         for="*"
-    ...         event="zope.component.interfaces.IObjectEvent"
+    ...         event="zope.interface.interfaces.IObjectEvent"
     ...         addview="test.condition"
     ...         editview="edit"
     ...         schema=".rule.tests.elements.ITestCondition"
@@ -36,7 +36,7 @@ Here is how we would register these in ZCML:
     ...         title="Test action"
     ...         description="A test action"
     ...         for="*"
-    ...         event="zope.component.interfaces.IObjectEvent"
+    ...         event="zope.interface.interfaces.IObjectEvent"
     ...         addview="test.action"
     ...         editview="edit"
     ...         schema=".rule.tests.elements.ITestAction"
@@ -66,7 +66,7 @@ inspect conditions and actions in rules.
     >>> from plone.contentrules.rule.interfaces import IRuleAction
 
     >>> from zope.component import getUtility
-    >>> from zope.component.interfaces import IObjectEvent
+    >>> from zope.interface.interfaces import IObjectEvent
     >>> from plone.contentrules.rule.tests import elements
 
     >>> condition = getUtility(IRuleCondition, name=u"test.condition")
