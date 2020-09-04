@@ -69,7 +69,7 @@ adaptable to IExecutable. This should be a multi-adapter from
 (context, element, event).
 
   >>> from plone.contentrules.rule.interfaces import IExecutable
-  >>> from zope.component.interfaces import IObjectEvent
+  >>> from zope.interface.interfaces import IObjectEvent
 
   >>> @implementer(IExecutable)
   ... @adapter(Interface, IMoveToFolderAction, IObjectEvent)
@@ -507,7 +507,7 @@ Event Filtering
 Rule elements can be specific to certain events. To create some event-specific
 rule elements, first import the specific events
 
-  >>> from zope.component.interfaces import IObjectEvent, ObjectEvent
+  >>> from zope.interface.interfaces import IObjectEvent, ObjectEvent
   >>> from zope.lifecycleevent.interfaces import IObjectCreatedEvent, \
   ...                                            IObjectCopiedEvent, \
   ...                                            IObjectModifiedEvent
