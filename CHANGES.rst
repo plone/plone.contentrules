@@ -8,6 +8,17 @@ Changelog
 
 .. towncrier release notes start
 
+2.1.0 (2020-09-07)
+------------------
+
+New features:
+
+
+- Fixed deprecation warning for ``IObjectEvent/ObjectEvent`` from ``zope.component``.
+  Drops compatibility with Plone 5.0 and earlier.
+  [maurits] (#3130)
+
+
 2.0.10 (2020-04-20)
 -------------------
 
