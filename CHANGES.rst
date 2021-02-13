@@ -8,6 +8,15 @@ Changelog
 
 .. towncrier release notes start
 
+2.1.1 (2020-10-09)
+-------------------
+
+Bug fixes:
+
+
+- Fix fields in the interface IRuleConfiguration: enabled, stop and cascading are not required. [andreesg]
+
+
 2.1.0 (2020-09-07)
 ------------------
 

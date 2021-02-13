@@ -113,15 +113,18 @@ class IRuleConfiguration(Interface):
 
     enabled = schema.Bool(title = _(u'Enabled'),
                           description = _(u'Whether or not the rule is currently enabled'),
-                          default = True)
+                          default = True,
+                          required = False)
 
     stop = schema.Bool(title = _(u"Stop executing rules"),
                        description = _(u"Whether or not execution of further rules should stop after this rule is executed"),
-                       default = False)
+                       default = False,
+                       required = False)
 
     cascading = schema.Bool(title = _(u"Cascading rule"),
                        description = _(u"Whether or not other rules should be triggered by the actions launched by this rule. Activate this only if you are sure this won't create infinite loops."),
-                       default = False)
+                       default = False,
+                       required = False)
 
 
 class IRule(IContained, IRuleConfiguration):
