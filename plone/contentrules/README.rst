@@ -439,7 +439,7 @@ triggered them. Because this is a test, we registered the rule for the "event"
 described by "Interface". In fact, this would equate to a rule triggered by
 any and all events.
 
-  >>> from zope.component.interfaces import ObjectEvent
+  >>> from zope.interface.interfaces import ObjectEvent
   >>> someEvent = ObjectEvent(context)
 
   >>> localRuleExecutor(someEvent)
