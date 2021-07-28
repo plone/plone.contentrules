@@ -8,6 +8,16 @@ Changelog
 
 .. towncrier release notes start
 
+2.1.2 (2021-07-28)
+------------------
+
+Bug fixes:
+
+
+- Fixed another deprecation warning for ``ObjectEvent`` from ``zope.component``.
+  [maurits] (#3130)
+
+
 2.1.1 (2021-04-27)
 ------------------
 

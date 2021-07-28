@@ -1,2 +1,0 @@
-Fixed another deprecation warning for ``ObjectEvent`` from ``zope.component``.
-[maurits]
