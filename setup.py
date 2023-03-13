@@ -37,7 +37,7 @@ setup(
     install_requires=[
       'setuptools',
       'six',
-      'ZODB3',
+      'ZODB',
       'zope.annotation',
       'zope.component',
       'zope.componentvocabulary',
