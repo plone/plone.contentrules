@@ -8,6 +8,16 @@ Changelog
 
 .. towncrier release notes start
 
+2.1.3 (2023-03-21)
+------------------
+
+Bug fixes:
+
+
+- Use `ZODB` as dependency rather than the deprecated `ZODB3`.
+  [gforcada] (#1)
+
+
 2.1.2 (2021-07-28)
 ------------------
 
