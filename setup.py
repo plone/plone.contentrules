@@ -38,16 +38,7 @@ setup(
     python_requires=">=3.8",
     install_requires=[
         "setuptools",
-        "ZODB",
-        "zope.annotation",
-        "zope.component",
         "zope.componentvocabulary",
-        "zope.configuration",
-        "zope.container",
-        "zope.i18nmessageid",
-        "zope.interface",
-        "zope.lifecycleevent",
-        "zope.schema",
-        "zope.testing",
+        "Zope",
     ],
 )
