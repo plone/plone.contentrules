@@ -40,7 +40,7 @@ class RuleAssignment(Contained, Persistent):
     """
 
     def __init__(self, ruleid, enabled=True, bubbles=False):
-        super(RuleAssignment, self).__init__()
+        super().__init__()
         self.__name__ = ruleid
         self.enabled = enabled
         self.bubbles = bubbles

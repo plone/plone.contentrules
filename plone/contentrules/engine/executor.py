@@ -10,7 +10,7 @@ from plone.contentrules.engine.interfaces import StopRule
 from plone.contentrules.rule.interfaces import IExecutable
 
 @implementer(IRuleExecutor)
-class RuleExecutor(object):
+class RuleExecutor:
     """An object that can execute rules in its context.
     """
     adapts(IRuleAssignable)

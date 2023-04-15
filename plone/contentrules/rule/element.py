@@ -3,15 +3,15 @@ from zope.interface import implementer, Interface
 from plone.contentrules.rule.interfaces import IRuleElement, IRuleCondition, IRuleAction
 
 @implementer(IRuleElement)
-class RuleElement(object):
+class RuleElement:
     """A rule element.
 
     Ordinarily, rule elements will be created via ZCML directives, which will
     register them as utilities.
     """
 
-    title = u''
-    description = u''
+    title = ''
+    description = ''
     for_ = Interface
     event = None
     addview = None

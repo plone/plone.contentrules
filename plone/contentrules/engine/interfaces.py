@@ -20,7 +20,7 @@ class IRuleStorage(IOrderedContainer, IContainerNamesContainer):
     """
     contains('plone.contentrules.rule.interfaces.IRule')
 
-    active = schema.Bool(title=u"Rules in this storage are active")
+    active = schema.Bool(title="Rules in this storage are active")
 
 class IRuleAssignable(IAttributeAnnotatable):
     """Marker interface for objects that can be assigned rules
@@ -30,10 +30,10 @@ class IRuleAssignment(IContained):
     """An assignment of a rule to a context
     """
 
-    __name__ = schema.TextLine(title=u"The id of the rule")
+    __name__ = schema.TextLine(title="The id of the rule")
 
-    enabled = schema.Bool(title=u"Whether or not the rule is currently enabled")
-    bubbles = schema.Bool(title=u"Whether or not the rule will apply to objects in subfolders")
+    enabled = schema.Bool(title="Whether or not the rule is currently enabled")
+    bubbles = schema.Bool(title="Whether or not the rule will apply to objects in subfolders")
 
 class IRuleAssignmentManager(IOrderedContainer):
     """An object that is capable of being assigned rules.

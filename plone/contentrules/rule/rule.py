@@ -12,8 +12,8 @@ class Rule(Persistent):
     """A rule.
     """
 
-    title = u''
-    description = u''
+    title = ''
+    description = ''
     event = None
     enabled = True
     stop = False
@@ -27,7 +27,7 @@ class Rule(Persistent):
         self.actions = PersistentList()
 
 @implementer(IExecutable)
-class RuleExecutable(object):
+class RuleExecutable:
     """An adapter capable of executing a rule
     """
     adapts(Interface, IRule, Interface)

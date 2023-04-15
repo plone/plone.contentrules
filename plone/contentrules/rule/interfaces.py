@@ -18,12 +18,12 @@ class IRuleElementData(Interface):
     or conditions).
     """
 
-    element = schema.ASCII(title=u"Rule element",
-                              description=u"The name of the rule action or condition",
+    element = schema.ASCII(title="Rule element",
+                              description="The name of the rule action or condition",
                               required=True)
 
-    summary = schema.Text(title=u"Summary",
-                          description=u"A human-readable description of this element as it is configured",
+    summary = schema.Text(title="Summary",
+                          description="A human-readable description of this element as it is configured",
                           required=True)
 
 class IRuleElement(Interface):
@@ -34,42 +34,42 @@ class IRuleElement(Interface):
     IRuleExecuter
     """
     title = schema.TextLine(
-        title = u'Title',
+        title = 'Title',
         required = True)
 
     description = schema.Text(
-        title = u'Description',
+        title = 'Description',
         required = False)
 
     for_ = configuration_fields.GlobalInterface(
-        title = u'Available for',
-        description = u'The interface this component is available for',
+        title = 'Available for',
+        description = 'The interface this component is available for',
         required = False)
 
     event = configuration_fields.GlobalInterface(
-        title = u'Applicable event',
-        description = u'The event that can trigger this element, None meaning '
+        title = 'Applicable event',
+        description = 'The event that can trigger this element, None meaning '
                        'it is not event specific.',
         required = False)
 
     addview = schema.TextLine(
-        title = u'Add view',
-        description = u'The name of the add view',
+        title = 'Add view',
+        description = 'The name of the add view',
         required = True)
 
     editview = schema.TextLine(
-        title = u"Edit view",
-        description = u"The name of the edit view",
+        title = "Edit view",
+        description = "The name of the edit view",
         required = True)
 
     schema = configuration_fields.GlobalInterface(
-        title = u'Schema',
-        description = u'Schema interface for configuring the element',
+        title = 'Schema',
+        description = 'Schema interface for configuring the element',
         required = False)
 
     factory = configuration_fields.GlobalInterface(
-        title = u'Factory',
-        description = u'Callable which creates an instance of the element',
+        title = 'Factory',
+        description = 'Callable which creates an instance of the element',
         required = False)
 
 class IRuleCondition(IRuleElement):
@@ -95,34 +95,34 @@ class IRuleConfiguration(Interface):
     """Configurable options for a rule
     """
 
-    title = schema.TextLine(title = _(u'Title'),
+    title = schema.TextLine(title = _('Title'),
                             description = _('description_contentrule_title',
-                                            default=u'Please set a descriptive title for the rule.'),
+                                            default='Please set a descriptive title for the rule.'),
                             required = True)
 
-    description = schema.Text(title = _(u'Description'),
+    description = schema.Text(title = _('Description'),
                               description = _('contentrules_description_description',
-                                              default=u'Enter a short description of the rule and its purpose.'),
+                                              default='Enter a short description of the rule and its purpose.'),
                               required = False)
 
-    event = schema.Choice(title = _(u'Triggering event'),
+    event = schema.Choice(title = _('Triggering event'),
                           description = _('contentrules_description_trigger',
-                                          default=u'The rule will execute when the following event occurs.'),
+                                          default='The rule will execute when the following event occurs.'),
                           required = True,
                           vocabulary="plone.contentrules.events")
 
-    enabled = schema.Bool(title = _(u'Enabled'),
-                          description = _(u'Whether or not the rule is currently enabled'),
+    enabled = schema.Bool(title = _('Enabled'),
+                          description = _('Whether or not the rule is currently enabled'),
                           default = True,
                           required = False)
 
-    stop = schema.Bool(title = _(u"Stop executing rules"),
-                       description = _(u"Whether or not execution of further rules should stop after this rule is executed"),
+    stop = schema.Bool(title = _("Stop executing rules"),
+                       description = _("Whether or not execution of further rules should stop after this rule is executed"),
                        default = False,
                        required = False)
 
-    cascading = schema.Bool(title = _(u"Cascading rule"),
-                       description = _(u"Whether or not other rules should be triggered by the actions launched by this rule. Activate this only if you are sure this won't create infinite loops."),
+    cascading = schema.Bool(title = _("Cascading rule"),
+                       description = _("Whether or not other rules should be triggered by the actions launched by this rule. Activate this only if you are sure this won't create infinite loops."),
                        default = False,
                        required = False)
 
@@ -139,12 +139,12 @@ class IRule(IContained, IRuleConfiguration):
     """
 
 
-    conditions = schema.List(title = u'Conditions',
-                             description = u'The conditions of this rule',
+    conditions = schema.List(title = 'Conditions',
+                             description = 'The conditions of this rule',
                              required = True)
 
-    actions = schema.List(title = u'Actions',
-                          description = u'The actions of this rule',
+    actions = schema.List(title = 'Actions',
+                          description = 'The actions of this rule',
                           required = True)
 
 

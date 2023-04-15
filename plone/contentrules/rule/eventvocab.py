@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from plone.contentrules.rule.interfaces import IRuleEventType
 from zope.componentvocabulary.vocabulary import UtilityVocabulary
 from zope.i18nmessageid import MessageFactory
@@ -26,11 +25,11 @@ class EventTypesVocabulary(UtilityVocabulary):
         if kw:
             self.nameOnly = bool(kw.get('nameOnly', False))
             interface = kw.get('interface', Interface)
-            if isinstance(interface, (six.string_types, six.text_type)):
+            if isinstance(interface, ((str,), str)):
                 interface = zope.component.getUtility(IInterface, interface)
             self.interface = interface
 
         utils = zope.component.getUtilitiesFor(self.interface, context)
-        self._terms = dict(
-            (name, SimpleTerm(self.nameOnly and name or util, name, _(name)))
-            for name, util in utils)
+        self._terms = {
+            name: SimpleTerm(self.nameOnly and name or util, name, _(name))
+            for name, util in utils}
