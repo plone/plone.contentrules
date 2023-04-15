@@ -1,7 +1,8 @@
 from plone.contentrules.rule.interfaces import IRuleEventType
 from zope.componentvocabulary.vocabulary import UtilityVocabulary
 from zope.i18nmessageid import MessageFactory
-from zope.interface import Interface, provider
+from zope.interface import Interface
+from zope.interface import provider
 from zope.interface.interfaces import IInterface
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleTerm

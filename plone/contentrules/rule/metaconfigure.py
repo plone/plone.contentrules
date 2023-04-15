@@ -1,8 +1,10 @@
+from plone.contentrules.rule.element import RuleAction
+from plone.contentrules.rule.element import RuleCondition
+from plone.contentrules.rule.interfaces import IRuleAction
+from plone.contentrules.rule.interfaces import IRuleCondition
 from zope.component.zcml import utility
 from zope.interface import Interface
 
-from plone.contentrules.rule.interfaces import IRuleCondition, IRuleAction
-from plone.contentrules.rule.element import RuleCondition, RuleAction
 
 def ruleConditionDirective(_context, name, title, addview, editview=None,
         description="", for_=Interface, event=Interface, schema=None, factory=None):

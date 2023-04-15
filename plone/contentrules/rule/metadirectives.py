@@ -1,7 +1,7 @@
-from zope.interface import Interface
-
 from zope import schema
 from zope.configuration import fields as configuration_fields
+from zope.interface import Interface
+
 
 class IRuleElementDirective(Interface):
     """Directive which registers a new rule element.

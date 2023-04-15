@@ -1,13 +1,12 @@
-from zope.interface import implementer
-from zope.component import adapts, getMultiAdapter
-
-from plone.contentrules.engine.interfaces import IRuleExecutor
 from plone.contentrules.engine.interfaces import IRuleAssignable
 from plone.contentrules.engine.interfaces import IRuleAssignmentManager
-
+from plone.contentrules.engine.interfaces import IRuleExecutor
 from plone.contentrules.engine.interfaces import StopRule
-
 from plone.contentrules.rule.interfaces import IExecutable
+from zope.component import adapts
+from zope.component import getMultiAdapter
+from zope.interface import implementer
+
 
 @implementer(IRuleExecutor)
 class RuleExecutor:

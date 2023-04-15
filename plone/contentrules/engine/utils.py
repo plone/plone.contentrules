@@ -1,5 +1,7 @@
+from plone.contentrules.rule.interfaces import IRuleAction
+from plone.contentrules.rule.interfaces import IRuleCondition
 from zope.component import getAllUtilitiesRegisteredFor
-from plone.contentrules.rule.interfaces import IRuleCondition, IRuleAction
+
 
 def getAvailableConditions(context, eventType):
     conditions = getAllUtilitiesRegisteredFor(IRuleCondition)

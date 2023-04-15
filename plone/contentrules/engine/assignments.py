@@ -1,20 +1,19 @@
-from persistent import Persistent
-
+from BTrees.OOBTree import OOBTree
 from OFS.Uninstalled import BrokenClass
-from ZODB.broken import PersistentBroken
-from zope.interface import implementer, implementer
-from zope.component import adapter, queryUtility
-from zope.annotation.interfaces import IAnnotations
-from zope.container.ordered import OrderedContainer
-from zope.container.contained import Contained
-from zope.container.interfaces import IObjectAddedEvent
-
-from plone.contentrules.engine.interfaces import IRuleStorage
+from persistent import Persistent
 from plone.contentrules.engine.interfaces import IRuleAssignable
 from plone.contentrules.engine.interfaces import IRuleAssignment
 from plone.contentrules.engine.interfaces import IRuleAssignmentManager
+from plone.contentrules.engine.interfaces import IRuleStorage
+from ZODB.broken import PersistentBroken
+from zope.annotation.interfaces import IAnnotations
+from zope.component import adapter
+from zope.component import queryUtility
+from zope.container.contained import Contained
+from zope.container.interfaces import IObjectAddedEvent
+from zope.container.ordered import OrderedContainer
+from zope.interface import implementer
 
-from BTrees.OOBTree import OOBTree
 
 try:
     from plone.protect.auto import safeWrite

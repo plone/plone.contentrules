@@ -1,11 +1,12 @@
 from persistent import Persistent
 from persistent.list import PersistentList
-
-from zope.interface import implementer, Interface
-from zope.component import adapts, getMultiAdapter
-
-from plone.contentrules.rule.interfaces import IRule
 from plone.contentrules.rule.interfaces import IExecutable
+from plone.contentrules.rule.interfaces import IRule
+from zope.component import adapts
+from zope.component import getMultiAdapter
+from zope.interface import implementer
+from zope.interface import Interface
+
 
 @implementer(IRule)
 class Rule(Persistent):

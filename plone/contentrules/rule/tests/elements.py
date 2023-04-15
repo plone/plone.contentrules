@@ -1,10 +1,11 @@
 """Dummies used in ZCML tests
 """
 
-from zope.interface import Interface, implementer
-from zope import schema
-
 from plone.contentrules.rule.interfaces import IRuleElementData
+from zope import schema
+from zope.interface import implementer
+from zope.interface import Interface
+
 
 class ITestCondition(Interface):
     test = schema.TextLine(title="Test property")

@@ -2,15 +2,12 @@
 """
 __docformat__ = 'restructuredtext'
 
-from zope.interface import Interface
-from zope.interface.interfaces import IInterface
-
-from zope.container.interfaces import IContained
-
+from plone.contentrules import PloneMessageFactory as _
 from zope import schema
 from zope.configuration import fields as configuration_fields
-
-from plone.contentrules import PloneMessageFactory as _
+from zope.container.interfaces import IContained
+from zope.interface import Interface
+from zope.interface.interfaces import IInterface
 
 
 class IRuleElementData(Interface):

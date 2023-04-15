@@ -1,12 +1,12 @@
-from zope.interface import Interface, Attribute
 from zope import schema
-
-from zope.container.interfaces import IContained
-from zope.container.interfaces import IOrderedContainer
-from zope.container.interfaces import IContainerNamesContainer
-
-from zope.container.constraints import contains
 from zope.annotation.interfaces import IAttributeAnnotatable
+from zope.container.constraints import contains
+from zope.container.interfaces import IContained
+from zope.container.interfaces import IContainerNamesContainer
+from zope.container.interfaces import IOrderedContainer
+from zope.interface import Attribute
+from zope.interface import Interface
+
 
 class StopRule(Exception):
     """An event that informs us that rule execution should be aborted.

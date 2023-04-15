@@ -1,9 +1,8 @@
-from zope.interface import implementer
-from zope.container.ordered import OrderedContainer
-
-from plone.contentrules.engine.interfaces import IRuleStorage
-
 from BTrees.OOBTree import OOBTree
+from plone.contentrules.engine.interfaces import IRuleStorage
+from zope.container.ordered import OrderedContainer
+from zope.interface import implementer
+
 
 @implementer(IRuleStorage)
 class RuleStorage(OrderedContainer):
