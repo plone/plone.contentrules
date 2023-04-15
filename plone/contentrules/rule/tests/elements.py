@@ -10,6 +10,7 @@ from zope.interface import Interface
 class ITestCondition(Interface):
     test = schema.TextLine(title="Test property")
 
+
 @implementer(ITestCondition, IRuleElementData)
 class TestCondition:
     test = ""
@@ -17,8 +18,10 @@ class TestCondition:
     summary = "Test condition"
     element = "test.condition"
 
+
 class ITestAction(Interface):
     test = schema.TextLine(title="Test property")
+
 
 @implementer(ITestAction, IRuleElementData)
 class TestAction:

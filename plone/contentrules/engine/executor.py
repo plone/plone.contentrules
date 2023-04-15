@@ -10,8 +10,8 @@ from zope.interface import implementer
 
 @implementer(IRuleExecutor)
 class RuleExecutor:
-    """An object that can execute rules in its context.
-    """
+    """An object that can execute rules in its context."""
+
     adapts(IRuleAssignable)
 
     def __init__(self, context):
@@ -29,7 +29,7 @@ class RuleExecutor:
                 # we store cascading option in the filter. if true, this will allow
                 # rules to be executed because of the actions ran by this rule.
                 if rule_filter is not None:
-                    cascade_before = getattr(rule_filter, 'cascade', False)
+                    cascade_before = getattr(rule_filter, "cascade", False)
                     rule_filter.cascade = rule.cascading
 
                 executable = getMultiAdapter((self.context, rule, event), IExecutable)

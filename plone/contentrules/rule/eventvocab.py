@@ -11,7 +11,7 @@ import six
 import zope.component
 
 
-_ = MessageFactory('plone')
+_ = MessageFactory("plone")
 
 
 @provider(IVocabularyFactory)
@@ -20,12 +20,13 @@ class EventTypesVocabulary(UtilityVocabulary):
     attribute of an IRule.
     An internationalized version of UtilityVocabulary
     """
+
     interface = IRuleEventType
 
     def __init__(self, context, **kw):
         if kw:
-            self.nameOnly = bool(kw.get('nameOnly', False))
-            interface = kw.get('interface', Interface)
+            self.nameOnly = bool(kw.get("nameOnly", False))
+            interface = kw.get("interface", Interface)
             if isinstance(interface, ((str,), str)):
                 interface = zope.component.getUtility(IInterface, interface)
             self.interface = interface
@@ -33,4 +34,5 @@ class EventTypesVocabulary(UtilityVocabulary):
         utils = zope.component.getUtilitiesFor(self.interface, context)
         self._terms = {
             name: SimpleTerm(self.nameOnly and name or util, name, _(name))
-            for name, util in utils}
+            for name, util in utils
+        }

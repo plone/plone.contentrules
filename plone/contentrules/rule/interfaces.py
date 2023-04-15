@@ -1,6 +1,6 @@
 """
 """
-__docformat__ = 'restructuredtext'
+__docformat__ = "restructuredtext"
 
 from plone.contentrules import PloneMessageFactory as _
 from zope import schema
@@ -15,13 +15,18 @@ class IRuleElementData(Interface):
     or conditions).
     """
 
-    element = schema.ASCII(title="Rule element",
-                              description="The name of the rule action or condition",
-                              required=True)
+    element = schema.ASCII(
+        title="Rule element",
+        description="The name of the rule action or condition",
+        required=True,
+    )
 
-    summary = schema.Text(title="Summary",
-                          description="A human-readable description of this element as it is configured",
-                          required=True)
+    summary = schema.Text(
+        title="Summary",
+        description="A human-readable description of this element as it is configured",
+        required=True,
+    )
+
 
 class IRuleElement(Interface):
     """Base interface for rule elements (actions and conditions)
@@ -30,44 +35,44 @@ class IRuleElement(Interface):
     form a rule.Rules can be constructed by the user and invoked by the
     IRuleExecuter
     """
-    title = schema.TextLine(
-        title = 'Title',
-        required = True)
 
-    description = schema.Text(
-        title = 'Description',
-        required = False)
+    title = schema.TextLine(title="Title", required=True)
+
+    description = schema.Text(title="Description", required=False)
 
     for_ = configuration_fields.GlobalInterface(
-        title = 'Available for',
-        description = 'The interface this component is available for',
-        required = False)
+        title="Available for",
+        description="The interface this component is available for",
+        required=False,
+    )
 
     event = configuration_fields.GlobalInterface(
-        title = 'Applicable event',
-        description = 'The event that can trigger this element, None meaning '
-                       'it is not event specific.',
-        required = False)
+        title="Applicable event",
+        description="The event that can trigger this element, None meaning "
+        "it is not event specific.",
+        required=False,
+    )
 
     addview = schema.TextLine(
-        title = 'Add view',
-        description = 'The name of the add view',
-        required = True)
+        title="Add view", description="The name of the add view", required=True
+    )
 
     editview = schema.TextLine(
-        title = "Edit view",
-        description = "The name of the edit view",
-        required = True)
+        title="Edit view", description="The name of the edit view", required=True
+    )
 
     schema = configuration_fields.GlobalInterface(
-        title = 'Schema',
-        description = 'Schema interface for configuring the element',
-        required = False)
+        title="Schema",
+        description="Schema interface for configuring the element",
+        required=False,
+    )
 
     factory = configuration_fields.GlobalInterface(
-        title = 'Factory',
-        description = 'Callable which creates an instance of the element',
-        required = False)
+        title="Factory",
+        description="Callable which creates an instance of the element",
+        required=False,
+    )
+
 
 class IRuleCondition(IRuleElement):
     """A condition of a rule
@@ -76,6 +81,7 @@ class IRuleCondition(IRuleElement):
     fail, the next element will be executed.
     """
 
+
 class IRuleAction(IRuleElement):
     """An action executed as part of a rule.
 
@@ -83,45 +89,68 @@ class IRuleAction(IRuleElement):
     Once an action is finished, the next element will be executed.
     """
 
+
 class IRuleEventType(IInterface):
     """Marker interface for event interfaces that can be used as the 'event'
     type of an IRule.
     """
 
+
 class IRuleConfiguration(Interface):
-    """Configurable options for a rule
-    """
+    """Configurable options for a rule"""
 
-    title = schema.TextLine(title = _('Title'),
-                            description = _('description_contentrule_title',
-                                            default='Please set a descriptive title for the rule.'),
-                            required = True)
+    title = schema.TextLine(
+        title=_("Title"),
+        description=_(
+            "description_contentrule_title",
+            default="Please set a descriptive title for the rule.",
+        ),
+        required=True,
+    )
 
-    description = schema.Text(title = _('Description'),
-                              description = _('contentrules_description_description',
-                                              default='Enter a short description of the rule and its purpose.'),
-                              required = False)
+    description = schema.Text(
+        title=_("Description"),
+        description=_(
+            "contentrules_description_description",
+            default="Enter a short description of the rule and its purpose.",
+        ),
+        required=False,
+    )
 
-    event = schema.Choice(title = _('Triggering event'),
-                          description = _('contentrules_description_trigger',
-                                          default='The rule will execute when the following event occurs.'),
-                          required = True,
-                          vocabulary="plone.contentrules.events")
+    event = schema.Choice(
+        title=_("Triggering event"),
+        description=_(
+            "contentrules_description_trigger",
+            default="The rule will execute when the following event occurs.",
+        ),
+        required=True,
+        vocabulary="plone.contentrules.events",
+    )
 
-    enabled = schema.Bool(title = _('Enabled'),
-                          description = _('Whether or not the rule is currently enabled'),
-                          default = True,
-                          required = False)
+    enabled = schema.Bool(
+        title=_("Enabled"),
+        description=_("Whether or not the rule is currently enabled"),
+        default=True,
+        required=False,
+    )
 
-    stop = schema.Bool(title = _("Stop executing rules"),
-                       description = _("Whether or not execution of further rules should stop after this rule is executed"),
-                       default = False,
-                       required = False)
+    stop = schema.Bool(
+        title=_("Stop executing rules"),
+        description=_(
+            "Whether or not execution of further rules should stop after this rule is executed"
+        ),
+        default=False,
+        required=False,
+    )
 
-    cascading = schema.Bool(title = _("Cascading rule"),
-                       description = _("Whether or not other rules should be triggered by the actions launched by this rule. Activate this only if you are sure this won't create infinite loops."),
-                       default = False,
-                       required = False)
+    cascading = schema.Bool(
+        title=_("Cascading rule"),
+        description=_(
+            "Whether or not other rules should be triggered by the actions launched by this rule. Activate this only if you are sure this won't create infinite loops."
+        ),
+        default=False,
+        required=False,
+    )
 
 
 class IRule(IContained, IRuleConfiguration):
@@ -135,14 +164,13 @@ class IRule(IContained, IRuleConfiguration):
     When saved in a rule storage, it will be given a name.
     """
 
+    conditions = schema.List(
+        title="Conditions", description="The conditions of this rule", required=True
+    )
 
-    conditions = schema.List(title = 'Conditions',
-                             description = 'The conditions of this rule',
-                             required = True)
-
-    actions = schema.List(title = 'Actions',
-                          description = 'The actions of this rule',
-                          required = True)
+    actions = schema.List(
+        title="Actions", description="The actions of this rule", required=True
+    )
 
 
 class IExecutable(Interface):

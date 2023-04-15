@@ -6,8 +6,18 @@ from zope.component.zcml import utility
 from zope.interface import Interface
 
 
-def ruleConditionDirective(_context, name, title, addview, editview=None,
-        description="", for_=Interface, event=Interface, schema=None, factory=None):
+def ruleConditionDirective(
+    _context,
+    name,
+    title,
+    addview,
+    editview=None,
+    description="",
+    for_=Interface,
+    event=Interface,
+    schema=None,
+    factory=None,
+):
     """Register a utility for IRuleCondition based on the parameters in the
     zcml directive
     """
@@ -25,8 +35,18 @@ def ruleConditionDirective(_context, name, title, addview, editview=None,
     utility(_context, provides=IRuleCondition, component=condition, name=name)
 
 
-def ruleActionDirective(_context, name, title, addview, editview=None,
-    description="", for_=Interface, event=Interface, schema=None, factory=None):
+def ruleActionDirective(
+    _context,
+    name,
+    title,
+    addview,
+    editview=None,
+    description="",
+    for_=Interface,
+    event=Interface,
+    schema=None,
+    factory=None,
+):
     """Register a utility for IRuleAction based on the parameters in the
     zcml directive
     """

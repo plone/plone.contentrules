@@ -6,8 +6,7 @@ from zope.interface import implementer
 
 @implementer(IRuleStorage)
 class RuleStorage(OrderedContainer):
-    """A container for rules.
-    """
+    """A container for rules."""
 
     active = True
 

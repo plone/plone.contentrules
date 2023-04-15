@@ -18,6 +18,7 @@ from zope.interface import implementer
 try:
     from plone.protect.auto import safeWrite
 except ImportError:
+
     def safeWrite(*args):
         pass
 
@@ -28,15 +29,16 @@ def check_rules_with_dotted_name_moved(rule):
     Avoids any upgrade to fail when setup profile is re-imported.
     """
     if PersistentBroken in rule.event.__bases__ or BrokenClass in rule.event.__bases__:
-        if rule.event.__name__ == 'IObjectAddedEvent':
+        if rule.event.__name__ == "IObjectAddedEvent":
             rule.event = IObjectAddedEvent
 
-KEY = 'plone.contentrules.localassignments'
+
+KEY = "plone.contentrules.localassignments"
+
 
 @implementer(IRuleAssignment)
 class RuleAssignment(Contained, Persistent):
-    """An assignment of a rule to a context
-    """
+    """An assignment of a rule to a context"""
 
     def __init__(self, ruleid, enabled=True, bubbles=False):
         super().__init__()
@@ -44,10 +46,10 @@ class RuleAssignment(Contained, Persistent):
         self.enabled = enabled
         self.bubbles = bubbles
 
+
 @implementer(IRuleAssignmentManager)
 class RuleAssignmentManager(OrderedContainer):
-    """A context-specific container for rule assignments
-    """
+    """A context-specific container for rule assignments"""
 
     def __init__(self):
         # XXX: This depends on implementation detail in OrderedContainer,
@@ -79,6 +81,7 @@ class RuleAssignmentManager(OrderedContainer):
                     rules.append(r)
 
         return rules
+
 
 @adapter(IRuleAssignable)
 @implementer(IRuleAssignmentManager)

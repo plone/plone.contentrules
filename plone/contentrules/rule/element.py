@@ -13,14 +13,15 @@ class RuleElement:
     register them as utilities.
     """
 
-    title = ''
-    description = ''
+    title = ""
+    description = ""
     for_ = Interface
     event = None
     addview = None
     editview = None
     schema = None
     factory = None
+
 
 @implementer(IRuleCondition)
 class RuleCondition(RuleElement):
@@ -30,6 +31,7 @@ class RuleCondition(RuleElement):
     specific interface to enable the UI to differentate between different types
     of elements.
     """
+
 
 @implementer(IRuleAction)
 class RuleAction(RuleElement):
