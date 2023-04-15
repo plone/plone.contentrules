@@ -4,7 +4,6 @@ from zope.container.constraints import contains
 from zope.container.interfaces import IContained
 from zope.container.interfaces import IContainerNamesContainer
 from zope.container.interfaces import IOrderedContainer
-from zope.interface import Attribute
 from zope.interface import Interface
 
 

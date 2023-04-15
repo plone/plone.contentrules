@@ -21,7 +21,7 @@ class RuleExecutor:
         assignments = IRuleAssignmentManager(self.context)
         for rule in assignments.getRules(event, bubbled=bubbled):
             # for each rule assigned in this context - bubbled means rule apply on subfolders
-            if rule_filter is None or rule_filter(self.context, rule, event) == True:
+            if rule_filter is None or rule_filter(self.context, rule, event) is True:
                 # execute the rule if it is not filtered, for example,
                 # it has not been executed on the same content but from an other context
                 # in the same request

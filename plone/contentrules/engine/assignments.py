@@ -64,7 +64,7 @@ class RuleAssignmentManager(OrderedContainer):
             for a in self.values():
                 if not a.enabled:
                     continue
-                if not (bubbled == False or a.bubbles):
+                if not (bubbled is False or a.bubbles):
                     continue
 
                 r = storage.get(a.__name__, None)
