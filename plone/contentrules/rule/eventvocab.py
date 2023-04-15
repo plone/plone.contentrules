@@ -7,7 +7,6 @@ from zope.interface.interfaces import IInterface
 from zope.schema.interfaces import IVocabularyFactory
 from zope.schema.vocabulary import SimpleTerm
 
-import six
 import zope.component
 
 
