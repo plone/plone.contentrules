@@ -1,39 +1,41 @@
-from zope.interface import Interface, Attribute
 from zope import schema
-
-from zope.container.interfaces import IContained
-from zope.container.interfaces import IOrderedContainer
-from zope.container.interfaces import IContainerNamesContainer
-
-from zope.container.constraints import contains
 from zope.annotation.interfaces import IAttributeAnnotatable
+from zope.container.constraints import contains
+from zope.container.interfaces import IContained
+from zope.container.interfaces import IContainerNamesContainer
+from zope.container.interfaces import IOrderedContainer
+from zope.interface import Interface
+
 
 class StopRule(Exception):
-    """An event that informs us that rule execution should be aborted.
-    """
+    """An event that informs us that rule execution should be aborted."""
 
     def __init__(self, rule):
         self.rule = rule
 
-class IRuleStorage(IOrderedContainer, IContainerNamesContainer):
-    """A storage for rules. This is registered as a local utility.
-    """
-    contains('plone.contentrules.rule.interfaces.IRule')
 
-    active = schema.Bool(title=u"Rules in this storage are active")
+class IRuleStorage(IOrderedContainer, IContainerNamesContainer):
+    """A storage for rules. This is registered as a local utility."""
+
+    contains("plone.contentrules.rule.interfaces.IRule")
+
+    active = schema.Bool(title="Rules in this storage are active")
+
 
 class IRuleAssignable(IAttributeAnnotatable):
-    """Marker interface for objects that can be assigned rules
-    """
+    """Marker interface for objects that can be assigned rules"""
+
 
 class IRuleAssignment(IContained):
-    """An assignment of a rule to a context
-    """
+    """An assignment of a rule to a context"""
 
-    __name__ = schema.TextLine(title=u"The id of the rule")
+    __name__ = schema.TextLine(title="The id of the rule")
 
-    enabled = schema.Bool(title=u"Whether or not the rule is currently enabled")
-    bubbles = schema.Bool(title=u"Whether or not the rule will apply to objects in subfolders")
+    enabled = schema.Bool(title="Whether or not the rule is currently enabled")
+    bubbles = schema.Bool(
+        title="Whether or not the rule will apply to objects in subfolders"
+    )
+
 
 class IRuleAssignmentManager(IOrderedContainer):
     """An object that is capable of being assigned rules.
@@ -47,6 +49,7 @@ class IRuleAssignmentManager(IOrderedContainer):
         assigned to this context. If bubbled is True, only rules that are
         bubbleable will be returned.
         """
+
 
 class IRuleExecutor(Interface):
     """An object that is capable of executing rules.

@@ -1,24 +1,24 @@
-from persistent import Persistent
-
+from BTrees.OOBTree import OOBTree
 from OFS.Uninstalled import BrokenClass
-from ZODB.broken import PersistentBroken
-from zope.interface import implementer, implementer
-from zope.component import adapter, queryUtility
-from zope.annotation.interfaces import IAnnotations
-from zope.container.ordered import OrderedContainer
-from zope.container.contained import Contained
-from zope.container.interfaces import IObjectAddedEvent
-
-from plone.contentrules.engine.interfaces import IRuleStorage
+from persistent import Persistent
 from plone.contentrules.engine.interfaces import IRuleAssignable
 from plone.contentrules.engine.interfaces import IRuleAssignment
 from plone.contentrules.engine.interfaces import IRuleAssignmentManager
+from plone.contentrules.engine.interfaces import IRuleStorage
+from ZODB.broken import PersistentBroken
+from zope.annotation.interfaces import IAnnotations
+from zope.component import adapter
+from zope.component import queryUtility
+from zope.container.contained import Contained
+from zope.container.interfaces import IObjectAddedEvent
+from zope.container.ordered import OrderedContainer
+from zope.interface import implementer
 
-from BTrees.OOBTree import OOBTree
 
 try:
     from plone.protect.auto import safeWrite
 except ImportError:
+
     def safeWrite(*args):
         pass
 
@@ -29,26 +29,27 @@ def check_rules_with_dotted_name_moved(rule):
     Avoids any upgrade to fail when setup profile is re-imported.
     """
     if PersistentBroken in rule.event.__bases__ or BrokenClass in rule.event.__bases__:
-        if rule.event.__name__ == 'IObjectAddedEvent':
+        if rule.event.__name__ == "IObjectAddedEvent":
             rule.event = IObjectAddedEvent
 
-KEY = 'plone.contentrules.localassignments'
+
+KEY = "plone.contentrules.localassignments"
+
 
 @implementer(IRuleAssignment)
 class RuleAssignment(Contained, Persistent):
-    """An assignment of a rule to a context
-    """
+    """An assignment of a rule to a context"""
 
     def __init__(self, ruleid, enabled=True, bubbles=False):
-        super(RuleAssignment, self).__init__()
+        super().__init__()
         self.__name__ = ruleid
         self.enabled = enabled
         self.bubbles = bubbles
 
+
 @implementer(IRuleAssignmentManager)
 class RuleAssignmentManager(OrderedContainer):
-    """A context-specific container for rule assignments
-    """
+    """A context-specific container for rule assignments"""
 
     def __init__(self):
         # XXX: This depends on implementation detail in OrderedContainer,
@@ -63,7 +64,7 @@ class RuleAssignmentManager(OrderedContainer):
             for a in self.values():
                 if not a.enabled:
                     continue
-                if not (bubbled == False or a.bubbles):
+                if not (bubbled is False or a.bubbles):
                     continue
 
                 r = storage.get(a.__name__, None)
@@ -80,6 +81,7 @@ class RuleAssignmentManager(OrderedContainer):
                     rules.append(r)
 
         return rules
+
 
 @adapter(IRuleAssignable)
 @implementer(IRuleAssignmentManager)

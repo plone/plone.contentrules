@@ -1,21 +1,22 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
-    xmlns:meta="http://namespaces.zope.org/meta">
+    xmlns:meta="http://namespaces.zope.org/meta"
+    >
 
-    <meta:directives namespace="http://namespaces.plone.org/plone">
+  <meta:directives namespace="http://namespaces.plone.org/plone">
 
-        <meta:directive
-            name="ruleCondition"
-            schema=".metadirectives.IRuleConditionDirective"
-            handler=".metaconfigure.ruleConditionDirective"
-            />
+    <meta:directive
+        name="ruleCondition"
+        handler=".metaconfigure.ruleConditionDirective"
+        schema=".metadirectives.IRuleConditionDirective"
+        />
 
-        <meta:directive
-            name="ruleAction"
-            schema=".metadirectives.IRuleActionDirective"
-            handler=".metaconfigure.ruleActionDirective"
-            />
+    <meta:directive
+        name="ruleAction"
+        handler=".metaconfigure.ruleActionDirective"
+        schema=".metadirectives.IRuleActionDirective"
+        />
 
-    </meta:directives>
+  </meta:directives>
 
 </configure>
