@@ -8,6 +8,23 @@ Changelog
 
 .. towncrier release notes start
 
+3.0.0 (2023-04-19)
+------------------
+
+Bug fixes:
+
+
+- Drop python 2.7.
+  [gforcada] (#1)
+
+
+Internal:
+
+
+- Update configuration files.
+  [plone devs] (5cc689e5)
+
+
 2.1.3 (2023-03-21)
 ------------------
 
