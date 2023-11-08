@@ -5,9 +5,9 @@ __docformat__ = "restructuredtext"
 from plone.contentrules import PloneMessageFactory as _
 from zope import schema
 from zope.configuration import fields as configuration_fields
-from zope.container.interfaces import IContained
 from zope.interface import Interface
 from zope.interface.interfaces import IInterface
+from zope.location.interfaces import IContained
 
 
 class IRuleElementData(Interface):

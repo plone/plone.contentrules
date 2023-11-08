@@ -1,10 +1,10 @@
 from zope import schema
 from zope.annotation.interfaces import IAttributeAnnotatable
 from zope.container.constraints import contains
-from zope.container.interfaces import IContained
 from zope.container.interfaces import IContainerNamesContainer
 from zope.container.interfaces import IOrderedContainer
 from zope.interface import Interface
+from zope.location.interfaces import IContained
 
 
 class StopRule(Exception):

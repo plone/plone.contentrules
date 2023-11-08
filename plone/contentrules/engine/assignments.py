@@ -10,9 +10,9 @@ from zope.annotation.interfaces import IAnnotations
 from zope.component import adapter
 from zope.component import queryUtility
 from zope.container.contained import Contained
-from zope.container.interfaces import IObjectAddedEvent
 from zope.container.ordered import OrderedContainer
 from zope.interface import implementer
+from zope.lifecycleevent.interfaces import IObjectAddedEvent
 
 
 try:
