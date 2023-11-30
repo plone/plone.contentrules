@@ -8,6 +8,23 @@ Changelog
 
 .. towncrier release notes start
 
+3.0.1 (2023-11-30)
+------------------
+
+Bug fixes:
+
+
+- Replace deprecated zope.container imports with their canonical locations.
+  [maurits] (#1)
+
+
+Internal:
+
+
+- Update configuration files.
+  [plone devs] (cfffba8c)
+
+
 3.0.0 (2023-04-19)
 ------------------
 
