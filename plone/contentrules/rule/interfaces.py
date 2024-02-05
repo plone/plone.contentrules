@@ -1,5 +1,6 @@
 """
 """
+
 __docformat__ = "restructuredtext"
 
 from plone.contentrules import PloneMessageFactory as _
