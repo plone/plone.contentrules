@@ -1,5 +1,4 @@
-"""Dummies used in ZCML tests
-"""
+"""Dummies used in ZCML tests"""
 
 from plone.contentrules.rule.interfaces import IRuleElementData
 from zope import schema

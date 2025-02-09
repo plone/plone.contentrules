@@ -1,5 +1,4 @@
-"""
-"""
+""" """
 
 __docformat__ = "restructuredtext"
 
