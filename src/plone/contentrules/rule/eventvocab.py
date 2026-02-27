@@ -9,7 +9,6 @@ from zope.schema.vocabulary import SimpleTerm
 
 import zope.component
 
-
 _ = MessageFactory("plone")
 
 
