@@ -5,7 +5,6 @@ from zope.container.testing import PlacelessSetup as ContainerPlacelessSetup
 import doctest
 import unittest
 
-
 optionflags = doctest.NORMALIZE_WHITESPACE | doctest.ELLIPSIS
 
 

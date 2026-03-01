@@ -14,7 +14,6 @@ from zope.container.ordered import OrderedContainer
 from zope.interface import implementer
 from zope.lifecycleevent.interfaces import IObjectAddedEvent
 
-
 try:
     from plone.protect.auto import safeWrite
 except ImportError:
